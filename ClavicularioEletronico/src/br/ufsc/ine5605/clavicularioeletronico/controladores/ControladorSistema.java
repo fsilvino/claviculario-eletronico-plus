@@ -25,7 +25,8 @@ public class ControladorSistema {
     }
 
     public void inicia() {
-        this.exibeMenuInicial();
+        abreCadastroFuncionario();
+        //this.exibeMenuInicial();
     }
 
     public void exibeMenuInicial() {
@@ -37,7 +38,7 @@ public class ControladorSistema {
     }
 
     public void abreCadastroFuncionario() {
-        ControladorFuncionario.getInstance().inicia();
+        ControladorFuncionarioNew.getInstance().inicia();
     }
 
     public void abreClaviculario() {

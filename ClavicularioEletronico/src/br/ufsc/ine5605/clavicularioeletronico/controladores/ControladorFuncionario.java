@@ -78,6 +78,7 @@ public class ControladorFuncionario extends ControladorCadastro<TelaFuncionario,
         String telefone = funcionario.getTelefone();
         Cargo cargo = funcionario.getCargo();
         if (funcionario != null) {
+            /*
             this.tela.exibeCadastro(getDetalhesFuncionario(funcionario));
             if (this.tela.alteraNome()) {
                 nome = this.tela.inputNome();
@@ -91,6 +92,7 @@ public class ControladorFuncionario extends ControladorCadastro<TelaFuncionario,
             if (this.tela.alteraCargo()) {
                 cargo = this.tela.inputCargo();
             }
+            */
             
             DadosFuncionario dadosFuncionario = new DadosFuncionario(matricula, nome, nascimento, telefone, cargo, true);
             copiaDadosParaFuncionario(dadosFuncionario, funcionario);
@@ -112,7 +114,7 @@ public class ControladorFuncionario extends ControladorCadastro<TelaFuncionario,
             throw new Exception("Este funcionario possui chave(s) a ser(em) devolvida(s).\n" +
                                 "Nao sera possivel excluir ate que todas sejam devolvidas.");
         }
-        if (this.tela.pedeConfirmacaoExclusao(funcionario.getNome(), funcionario.getMatricula())) {
+        if (false /*this.tela.pedeConfirmacaoExclusao(funcionario.getNome(), funcionario.getMatricula())*/) {
             ControladorPermissaoUsoVeiculo.getInstance().excluirPermissoesFuncionario(funcionario);
             itens.remove(funcionario);
         }
