@@ -36,11 +36,13 @@ public abstract class ControladorCadastroNew<TTb extends TelaBaseTable<DTO>, TCa
     protected abstract boolean valida(DTO item) throws Exception;
     protected abstract void salvaInclusao(DTO item);
     protected abstract void salvaAlteracao(DTO item);
+    protected abstract void executaExclusao(DTO item);
     protected abstract List<DTO> getListaDTO();
     protected abstract DAO getDao();
     
     public void inicia() {
         this.telaTb.setVisible(true);
+        this.atualizaListaTela();
     }
 
     @Override
@@ -55,8 +57,9 @@ public abstract class ControladorCadastroNew<TTb extends TelaBaseTable<DTO>, TCa
 
     @Override
     public void exclui(DTO item) {
-        if (JOptionPane.showConfirmDialog(null, "Deseja realmente excluir?") == 1) {
-            
+        if (JOptionPane.showConfirmDialog(null, "Deseja realmente excluir?", "Confirmação", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+            executaExclusao(item);
+            this.atualizaListaTela();
         }
     }
 
@@ -70,6 +73,7 @@ public abstract class ControladorCadastroNew<TTb extends TelaBaseTable<DTO>, TCa
                 } else if (AcoesCadastro.ACAO_ALTERA.equals(acao)) {
                     this.salvaAlteracao(item);
                 }
+                this.atualizaListaTela();
             }    
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e.getMessage());

@@ -4,24 +4,24 @@ import br.ufsc.ine5605.clavicularioeletronico.transferencias.DadosVeiculo;
 import br.ufsc.ine5605.clavicularioeletronico.entidades.Veiculo;
 import br.ufsc.ine5605.clavicularioeletronico.excecoes.PlacaJaCadastradaException;
 import br.ufsc.ine5605.clavicularioeletronico.excecoes.PlacaNaoCadastradaException;
-import br.ufsc.ine5605.clavicularioeletronico.telas.TelaVeiculo;
-import br.ufsc.ine5605.clavicularioeletronico.transferencias.ItemListaCadastro;
-import br.ufsc.ine5605.clavicularioeletronico.transferencias.Listavel;
+import br.ufsc.ine5605.clavicularioeletronico.persistencia.VeiculoDAO;
+import br.ufsc.ine5605.clavicularioeletronico.telasgraficas.TelaTableVeiculo;
+import br.ufsc.ine5605.clavicularioeletronico.telasgraficas.TelaVeiculoNew;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 
 /**
  * Responsável pelo controle de cadastro dos veículos
  * @author Flávio
  */
-public class ControladorVeiculo extends ControladorCadastro<TelaVeiculo, Veiculo> {
+public class ControladorVeiculo extends ControladorCadastroNew<TelaTableVeiculo, TelaVeiculoNew, VeiculoDAO, String, Veiculo, DadosVeiculo> {
 
     private static ControladorVeiculo instance;
 
     private ControladorVeiculo() {
         super();
-        tela = new TelaVeiculo();
     }
 
     public static ControladorVeiculo getInstance() {
@@ -31,119 +31,115 @@ public class ControladorVeiculo extends ControladorCadastro<TelaVeiculo, Veiculo
         return instance;
     }
 
-    /**
-     * Monta a lista de itens para imprimir na tela
-     * @return Lista das descrições para imprimir a lista na tela
-     */
     @Override
-    public List<Listavel> getListaItensCadastro() {
-        List<Listavel> lista = new ArrayList<>();
-        for (Veiculo veiculo : itens) {
-            lista.add(new ItemListaCadastro(veiculo.getPlaca() + "\t" + veiculo.getModelo()));
+    protected TelaTableVeiculo instanciaTelaTable() {
+        return new TelaTableVeiculo();
+    }
+
+    @Override
+    protected TelaVeiculoNew instanciaTelaCadastro() {
+        return new TelaVeiculoNew();
+    }
+
+    @Override
+    protected boolean valida(DadosVeiculo dadosVeiculo) throws Exception {
+        if (dadosVeiculo == null) {
+            throw new InvalidParameterException("Dados invalidos! Parametro nulo.");
+        }
+        
+        if (dadosVeiculo.placa == null || dadosVeiculo.placa.trim().isEmpty()) {
+            throw new Exception("Informe a placa do veiculo!");
+        }
+        
+        if (!dadosVeiculo.placa.matches("[A-Z]{3}-[0-9]{4}")) {
+            throw new Exception("Informe a placa com 3 letras maiusculas e 4 numeros, separados por um traco. Ex: AAA-9999.");
+        }
+        
+        return true;
+    }
+
+    @Override
+    protected void salvaInclusao(DadosVeiculo dadosVeiculo) {
+        try {
+            if (valida(dadosVeiculo)) {
+                if (findVeiculoPelaPlaca(dadosVeiculo.placa) == null) {
+                    Veiculo veiculo = new Veiculo();
+                    copiaDadosParaVeiculo(dadosVeiculo, veiculo);
+                    getDao().put(veiculo.getPlaca(), veiculo);
+                } else {
+                    throw new PlacaJaCadastradaException(dadosVeiculo.placa);
+                }
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(telaCad, e.getMessage());
+        }
+    }
+
+    @Override
+    protected void salvaAlteracao(DadosVeiculo dadosVeiculo) {
+        try {
+            Veiculo veiculo = findVeiculoPelaPlaca(dadosVeiculo.placa);
+            if (veiculo != null) {
+                if (valida(dadosVeiculo)) {
+                    copiaDadosParaVeiculo(dadosVeiculo, veiculo); 
+                    getDao().put(veiculo.getPlaca(), veiculo);
+                }
+            } else {
+                throw new PlacaNaoCadastradaException(dadosVeiculo.placa);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(telaCad, e.getMessage());
+        }
+    }
+
+    @Override
+    protected void executaExclusao(DadosVeiculo dadosVeiculo) {
+        try {
+            if (dadosVeiculo.placa == null || dadosVeiculo.placa.isEmpty()) {
+                throw new InvalidParameterException("Falha ao excluir o veiculo! Placa nao informada.");
+            }
+
+            Veiculo veiculo = findVeiculoPelaPlaca(dadosVeiculo.placa);
+            if (veiculo == null) {
+                throw new PlacaNaoCadastradaException(dadosVeiculo.placa);
+            }
+
+            if (!ControladorClaviculario.getInstance().veiculoDisponivel(veiculo.getPlaca())) {
+                throw new Exception("Este veiculo esta sendo utilizado! Para excluir ele deve ser devolvido primeiro.");
+            }
+
+            ControladorPermissaoUsoVeiculo.getInstance().excluirPermissoesVeiculo(veiculo);
+            getDao().remove(veiculo.getPlaca());
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(telaTb, e.getMessage());
+        }
+    }
+
+    @Override
+    protected List<DadosVeiculo> getListaDTO() {
+        ArrayList<DadosVeiculo> lista = new ArrayList<>();
+        for (Veiculo veiculo : getDao().getList()) {
+            lista.add(new DadosVeiculo(veiculo.getPlaca(), 
+                                       veiculo.getModelo(), 
+                                       veiculo.getMarca(), 
+                                       veiculo.getAno(),
+                                       veiculo.getQuilometragemAtual()));
         }
         return lista;
     }
 
-    /**
-     * Inclui o cadastro do veiculo
-     * @param dadosVeiculo Dados do veiculo passados pela tela
-     * @throws Exception Caso algum veiculo já esteja cadastrado com a placa ou os dados sejam inválidos
-     */
-    public void inclui(DadosVeiculo dadosVeiculo) throws Exception {
-        if (validaDadosVeiculo(dadosVeiculo)) {
-            if (findVeiculoPelaPlaca(dadosVeiculo.getPlaca()) == null) {
-                Veiculo veiculo = new Veiculo();
-                copiaDadosParaVeiculo(dadosVeiculo, veiculo);
-                itens.add(veiculo);
-            } else {
-                throw new PlacaJaCadastradaException(dadosVeiculo.getPlaca());
-            }
-        }
+    @Override
+    protected VeiculoDAO getDao() {
+        return VeiculoDAO.getInstance();
     }
 
-    /**
-     * Altera os dados do veiculo baseado na placa
-     * @param placa Placa do veiculo para alteracao
-     * @throws Exception Caso os dados sejam invalidos ou nao encontre a placa
-     */
-    public void altera(String placa) throws Exception {
-        Veiculo veiculo = findVeiculoPelaPlaca(placa);
-        if (veiculo != null) {
-            String marca = veiculo.getMarca();
-            String modelo = veiculo.getModelo();
-            int ano = veiculo.getAno();
-            int quilometragemAtual = veiculo.getQuilometragemAtual();
-            this.tela.exibeCadastro(getDetalhesVeiculo(veiculo));
-            if (this.tela.alteraMarca()) {
-                marca = this.tela.inputMarca();
-            }
-            if (this.tela.alteraModelo()) {
-                modelo = this.tela.inputModelo();
-            }
-            if (this.tela.alteraAno()) {
-                ano = this.tela.inputAno();
-            }
-            if (this.tela.alteraQuilometragem()) {
-                quilometragemAtual = this.tela.inputQuilometragemAtual();
-            }
-            DadosVeiculo dadosVeiculo = new DadosVeiculo(placa, marca, modelo, ano, quilometragemAtual);
-            copiaDadosParaVeiculo(dadosVeiculo, veiculo); 
-        } else {
-            throw new PlacaNaoCadastradaException(placa);
-        }
-    }
-
-    /**
-     * Exclui o veiculo pela placa
-     * @param placa Placa do veiculo a ser excluido
-     * @throws Exception Caso a placa seja invalida ou nao for passada
-     */
-    public void exclui(String placa) throws Exception {
-        if (placa == null || placa.isEmpty()) {
-            throw new InvalidParameterException("Falha ao excluir o veiculo! Placa nao informada.");
-        }
-        
-        Veiculo veiculo = findVeiculoPelaPlaca(placa);
-        if (veiculo == null) {
-            throw new PlacaNaoCadastradaException(placa);
-        }
-        
-        if (!ControladorClaviculario.getInstance().veiculoDisponivel(veiculo.getPlaca())) {
-            throw new Exception("Este veiculo esta sendo utilizado! Para excluir ele deve ser devolvido primeiro.");
-        }
-        if (this.tela.pedeConfirmacaoExclusao(veiculo.getModelo(), veiculo.getPlaca())) {
-            ControladorPermissaoUsoVeiculo.getInstance().excluirPermissoesVeiculo(veiculo);
-            itens.remove(veiculo);
-        }
-        else {
-            throw new Exception("Operacao cancelada!");
-        }
-    }
-
-    /**
-     * Exclui o veiculo, pesquisa pela placa
-     * @param veiculo Instancia de veiculo que contem a placa a ser excluida
-     * @throws Exception Se o parametro for nulo ou nao encontrar a placa
-     */
-    public void exclui(Veiculo veiculo) throws Exception {
-        if (veiculo == null) {
-            throw new InvalidParameterException("Falha ao excluir o veiculo! Parametro nulo.");
-        }
-        exclui(veiculo.getPlaca());
-    }
-    
     /**
      * Pesquisa o veiculo pela placa
      * @param placa Placa a ser pesquisada
      * @return Veiculo encontrado pela placa ou nulo se nao encontrar
      */
     private Veiculo findVeiculoPelaPlaca(String placa) {
-        for (Veiculo veiculo : itens) {
-            if (veiculo.getPlaca().equals(placa)) {
-                return veiculo;
-            }
-        }
-        return null;
+        return getDao().get(placa);
     }
     
     /**
@@ -152,34 +148,11 @@ public class ControladorVeiculo extends ControladorCadastro<TelaVeiculo, Veiculo
      * @param veiculo Objeto veiculo que ira receber os dados
      */
     private void copiaDadosParaVeiculo(DadosVeiculo dadosVeiculo, Veiculo veiculo) {
-        veiculo.setPlaca(dadosVeiculo.getPlaca());
-        veiculo.setModelo(dadosVeiculo.getModelo());
-        veiculo.setMarca(dadosVeiculo.getMarca());
-        veiculo.setAno(dadosVeiculo.getAno());
-        veiculo.setQuilometragemAtual(dadosVeiculo.getQuilometragemAtual());
-    }
-    
-    /**
-     * Valida os dados do veiculo
-     * @param dadosVeiculo Dados passados pela tela
-     * @return True se os dados sao validos, caso contrario gera exceção
-     * @throws Exception Se algum dado for invalido
-     */
-    private boolean validaDadosVeiculo(DadosVeiculo dadosVeiculo) throws Exception {
-        
-        if (dadosVeiculo == null) {
-            throw new InvalidParameterException("Dados invalidos! Parametro nulo.");
-        }
-        
-        if (dadosVeiculo.getPlaca() == null || dadosVeiculo.getPlaca().trim().isEmpty()) {
-            throw new Exception("Informe a placa do veiculo!");
-        }
-        
-        if (!dadosVeiculo.getPlaca().matches("[A-Z]{3}-[0-9]{4}")) {
-            throw new Exception("Informe a placa com 3 letras maiusculas e 4 numeros, separados por um traco. Ex: AAA-9999.");
-        }
-        
-        return true;
+        veiculo.setPlaca(dadosVeiculo.placa);
+        veiculo.setModelo(dadosVeiculo.modelo);
+        veiculo.setMarca(dadosVeiculo.marca);
+        veiculo.setAno(dadosVeiculo.ano);
+        veiculo.setQuilometragemAtual(dadosVeiculo.quilometragemAtual);
     }
 
     /**
@@ -210,14 +183,10 @@ public class ControladorVeiculo extends ControladorCadastro<TelaVeiculo, Veiculo
      * @return Retorna o veículo caso seja o único cadastrado, caso contrário retorna null
      */
     public Veiculo getVeiculoQuandoUnico() {
-        if (this.itens.size() == 1) {
-            return this.itens.get(0);
+        if (this.getDao().getList().size() == 1) {
+            return (Veiculo)this.getDao().getList().toArray()[0];
         }
         return null;
-    }
-    
-    private ItemListaCadastro getDetalhesVeiculo(Veiculo veiculo) {
-        return new ItemListaCadastro("Marca: "+veiculo.getMarca()+"\nModelo: "+veiculo.getModelo()+"\nAno: "+veiculo.getAno()+"\nQuilometragem: "+veiculo.getQuilometragemAtual());
     }
     
 }

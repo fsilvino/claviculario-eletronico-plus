@@ -1,6 +1,7 @@
 package br.ufsc.ine5605.clavicularioeletronico.controladores;
 
 import br.ufsc.ine5605.clavicularioeletronico.telas.TelaSistema;
+import br.ufsc.ine5605.clavicularioeletronico.telasgraficas.TelaSistemaNew;
 
 /**
  * Controlador principal do sistema, controla o menu principal e 
@@ -11,10 +12,10 @@ public class ControladorSistema {
 
     private static ControladorSistema instance;
     
-    private TelaSistema tela;
+    private TelaSistemaNew tela;
     
     private ControladorSistema() {
-        tela = new TelaSistema();
+        tela = new TelaSistemaNew();
     }
 
     public static ControladorSistema getInstance() {
@@ -25,12 +26,12 @@ public class ControladorSistema {
     }
 
     public void inicia() {
-        abreCadastroFuncionario();
-        //this.exibeMenuInicial();
+        //abreCadastroFuncionario();
+        this.exibeMenuInicial();
     }
 
     public void exibeMenuInicial() {
-        tela.exibeMenu();
+        tela.setVisible(true);
     }
 
     public void abreCadastroVeiculo() {
@@ -38,7 +39,7 @@ public class ControladorSistema {
     }
 
     public void abreCadastroFuncionario() {
-        ControladorFuncionarioNew.getInstance().inicia();
+        ControladorFuncionario.getInstance().inicia();
     }
 
     public void abreClaviculario() {

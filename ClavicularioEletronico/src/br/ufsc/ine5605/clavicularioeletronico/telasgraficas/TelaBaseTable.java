@@ -101,6 +101,7 @@ public abstract class TelaBaseTable<E> extends JFrame {
         
         this.table = new JTable();
         this.table.setPreferredScrollableViewportSize(new Dimension(tamanhoTela.width - 100, tamanhoTela.height - 200));
+        this.table.setDefaultEditor(Object.class, null);
         //this.table.setPreferredScrollableViewportSize(new Dimension(300, 200));
         this.table.setFillsViewportHeight(true);
         GridBagConstraints constraint = new GridBagConstraints();
@@ -145,7 +146,6 @@ public abstract class TelaBaseTable<E> extends JFrame {
         
         this.setSize(tamanhoTela);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     
     protected void atualizaDados() {

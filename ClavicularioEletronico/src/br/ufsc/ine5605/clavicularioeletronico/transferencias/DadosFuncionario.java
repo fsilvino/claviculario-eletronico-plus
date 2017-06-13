@@ -10,7 +10,7 @@ import java.util.Date;
  */
 public class DadosFuncionario {
 
-    public int matricula;
+    public Integer matricula;
     public String nome;
     public Date nascimento;
     public String telefone;
@@ -21,7 +21,7 @@ public class DadosFuncionario {
         
     }
     
-    public DadosFuncionario(int matricula, String nome, Date nascimento, String telefone, Cargo cargo, boolean bloqueado) {
+    public DadosFuncionario(Integer matricula, String nome, Date nascimento, String telefone, Cargo cargo, boolean bloqueado) {
         this.matricula = matricula;
         this.nome = nome;
         this.nascimento = nascimento;
@@ -30,52 +30,53 @@ public class DadosFuncionario {
         this.bloqueado = bloqueado;
     }
 
-    public int getMatricula() {
-        return matricula;
-    }
-
-    public void setMatricula(int matricula) {
-        this.matricula = matricula;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public Date getNascimento() {
-        return nascimento;
-    }
-
-    public void setNascimento(Date nascimento) {
-        this.nascimento = nascimento;
-    }
-
-    public String getTelefone() {
-        return telefone;
-    }
-
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
-    }
-
-    public Cargo getCargo() {
-        return cargo;
-    }
-
-    public void setCargo(Cargo cargo) {
-        this.cargo = cargo;
-    }
-
-    public boolean getBloqueado() {
-        return bloqueado;
-    }
-
-    public void setBloqueado(boolean bloqueado) {
-        this.bloqueado = bloqueado;
-    }
+//    public int getMatricula() {
+//        return matricula;
+//    }
+//
+//    public void setMatricula(int matricula) {
+//        this.matricula = matricula;
+//    }
+//
+//    public String getNome() {
+//        return nome;
+//    }
+//
+//    public void setNome(String nome) {
+//        this.nome = nome;
+//    }
+//
+//    public Date getNascimento() {
+//        return nascimento;
+//    }
+//
+//    public void setNascimento(Date nascimento) {
+//        this.nascimento = nascimento;
+//    }
+//
+//    public String getTelefone() {
+//        return telefone;
+//    }
+//
+//    public void setTelefone(String telefone) {
+//        this.telefone = telefone;
+//    }
+//
+//    public Cargo getCargo() {
+//        return cargo;
+//    }
+//
+//    public void setCargo(Cargo cargo) {
+//        this.cargo = cargo;
+//    }
+//
+//    public boolean getBloqueado() {
+//        return bloqueado;
+//    }
+//
+//    public void setBloqueado(boolean bloqueado) {
+//        this.bloqueado = bloqueado;
+//    }   
+    
 
 }

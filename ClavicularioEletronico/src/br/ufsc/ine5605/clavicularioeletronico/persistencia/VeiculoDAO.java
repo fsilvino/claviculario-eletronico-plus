@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.ufsc.ine5605.clavicularioeletronico.persistencia;
 
 import br.ufsc.ine5605.clavicularioeletronico.entidades.Veiculo;
@@ -12,8 +7,17 @@ import br.ufsc.ine5605.clavicularioeletronico.entidades.Veiculo;
  * @author Flávio
  */
 public class VeiculoDAO extends BaseDAO<String, Veiculo> {
+    
+    private static VeiculoDAO instance;
+    
+    public static VeiculoDAO getInstance() {
+        if (instance == null) {
+            instance = new VeiculoDAO();
+        }
+        return instance;
+    }
 
-    public VeiculoDAO() {
+    private VeiculoDAO() {
         super();
     }
 
@@ -21,7 +25,5 @@ public class VeiculoDAO extends BaseDAO<String, Veiculo> {
     protected String getFileName() {
         return "veiculos.cla";
     }
-    
-    
     
 }
