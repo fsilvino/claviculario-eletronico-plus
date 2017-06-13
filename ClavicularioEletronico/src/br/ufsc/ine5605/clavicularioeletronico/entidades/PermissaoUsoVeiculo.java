@@ -1,12 +1,13 @@
 package br.ufsc.ine5605.clavicularioeletronico.entidades;
 
+import java.io.Serializable;
 import java.security.InvalidParameterException;
 
 /**
  * Define a permissão de uso de um veículo por um funcionário
  * @author Flávio
  */
-public class PermissaoUsoVeiculo {
+public class PermissaoUsoVeiculo implements Serializable {
     
     private Funcionario funcionario;
     private Veiculo veiculo;

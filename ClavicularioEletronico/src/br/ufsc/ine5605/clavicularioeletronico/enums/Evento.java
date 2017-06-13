@@ -1,10 +1,12 @@
 package br.ufsc.ine5605.clavicularioeletronico.enums;
 
+import java.io.Serializable;
+
 /**
  * Eventos registrados pelo claviculário
  * @author Flávio
  */
-public enum Evento {
+public enum Evento implements Serializable {
 
     ACESSO_PERMITIDO,
     MATRICULA_INVALIDA,

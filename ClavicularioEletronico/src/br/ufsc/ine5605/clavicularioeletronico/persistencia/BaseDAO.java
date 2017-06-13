@@ -8,12 +8,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Collection;
 import java.util.HashMap;
+import javax.swing.JOptionPane;
 
 /**
- *
+ * 
  * @author Flávio
- * @param <K>
- * @param <V>
+ * @param <K> Tipo da chave
+ * @param <V> Tipo da entidade
  */
 public abstract class BaseDAO<K, V> {
     
@@ -23,6 +24,7 @@ public abstract class BaseDAO<K, V> {
     protected BaseDAO() {
         this.cache = new HashMap<>();
         this.fileName = this.getFileName();
+        load();
     }
     
     protected abstract String getFileName();
@@ -34,6 +36,7 @@ public abstract class BaseDAO<K, V> {
     public void put(K key, V value) {
         if (key != null && value != null) {
             this.cache.put(key, value);
+            persist();
         } else {
             throw new RuntimeException("A chave e o valor devem ser diferentes de null!");
         }
@@ -49,13 +52,14 @@ public abstract class BaseDAO<K, V> {
             
             oi.close();
             fi.close();
-        } catch (IOException iOException) {
-            
-        } catch (ClassNotFoundException classNotFoundException) {
-            
+        } catch (IOException | ClassNotFoundException ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage());
         }
-            
-        
+    }
+    
+    public void remove(K key) {
+        this.cache.remove(key);
+        persist();
     }
     
     public void persist() {
@@ -72,9 +76,9 @@ public abstract class BaseDAO<K, V> {
             oo.close();
             fo.close();
         } catch (FileNotFoundException ex) {
-            
-        } catch (IOException iOException) {
-            
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage());
         }
     }
     

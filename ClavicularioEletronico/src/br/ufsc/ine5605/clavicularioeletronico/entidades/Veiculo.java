@@ -1,6 +1,8 @@
 package br.ufsc.ine5605.clavicularioeletronico.entidades;
 
-public class Veiculo {
+import java.io.Serializable;
+
+public class Veiculo implements Serializable {
 
     private String placa;
     private String modelo;

@@ -2,10 +2,11 @@ package br.ufsc.ine5605.clavicularioeletronico.entidades;
 
 import java.util.Date;
 import br.ufsc.ine5605.clavicularioeletronico.enums.Cargo;
+import java.io.Serializable;
 
-public class Funcionario {
+public class Funcionario implements Serializable {
 
-    private int matricula;
+    private Integer matricula;
     private String nome;
     private Date nascimento;
     private String telefone;
@@ -25,11 +26,11 @@ public class Funcionario {
         return numeroTentativasSemPermissao;
     }
     
-    public int getMatricula() {
+    public Integer getMatricula() {
         return matricula;
     }
 
-    public void setMatricula(int matricula) {
+    public void setMatricula(Integer matricula) {
         this.matricula = matricula;
     }
 
@@ -72,5 +73,5 @@ public class Funcionario {
     public void setCargo(Cargo cargo) {
         this.cargo = cargo;
     }
-
+    
 }

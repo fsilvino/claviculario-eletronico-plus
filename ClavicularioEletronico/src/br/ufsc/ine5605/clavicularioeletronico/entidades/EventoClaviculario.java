@@ -1,9 +1,10 @@
 package br.ufsc.ine5605.clavicularioeletronico.entidades;
 
 import br.ufsc.ine5605.clavicularioeletronico.enums.Evento;
+import java.io.Serializable;
 import java.util.Calendar;
 
-public class EventoClaviculario {
+public class EventoClaviculario implements Serializable {
 
     private Evento evento;
     private Calendar dataHora;
