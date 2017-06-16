@@ -1,6 +1,5 @@
 package br.ufsc.ine5605.clavicularioeletronico.controladores;
 
-import br.ufsc.ine5605.clavicularioeletronico.telas.TelaSistema;
 import br.ufsc.ine5605.clavicularioeletronico.telasgraficas.TelaSistemaNew;
 
 /**
@@ -26,7 +25,6 @@ public class ControladorSistema {
     }
 
     public void inicia() {
-        //abreCadastroFuncionario();
         this.exibeMenuInicial();
     }
 
@@ -42,8 +40,8 @@ public class ControladorSistema {
         ControladorFuncionario.getInstance().inicia();
     }
 
-    public void abreClaviculario() {
-        ControladorClaviculario.getInstance().inicia();
+    public void abreRetirarChaveClaviculario() {
+        ControladorClaviculario.getInstance().abreTelaRetirarChave();
     }
 
 }

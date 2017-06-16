@@ -43,7 +43,11 @@ public class ControladorClaviculario {
         }
         return instance;
     }
-
+    
+    public void abreTelaRetirarChave() {
+        
+    }
+    
     public void inicia() {
         tela.exibeMenu();
     }
@@ -68,7 +72,7 @@ public class ControladorClaviculario {
         if (funcionario.getCargo() == Cargo.DIRETORIA) {
             veiculo = ControladorVeiculo.getInstance().getVeiculoQuandoUnico();
         } else {
-            List<PermissaoUsoVeiculo> permissoes = ControladorPermissaoUsoVeiculo.getInstance().getPermissoesFuncionario(funcionario.getMatricula());
+            List<PermissaoUsoVeiculo> permissoes = ControladorFuncionario.getInstance().getPermissoesFuncionario(funcionario.getMatricula());
             if (permissoes.size() == 1) {
                 veiculo = permissoes.get(0).getVeiculo();
             }
@@ -81,7 +85,7 @@ public class ControladorClaviculario {
         
         if (this.veiculoDisponivel(veiculo.getPlaca())) {
             if (funcionario.getCargo() != Cargo.DIRETORIA) {   
-                 if (!ControladorPermissaoUsoVeiculo.getInstance().permissaoExiste(funcionario, veiculo)) {
+                 if (!ControladorFuncionario.getInstance().permissaoExiste(funcionario, veiculo)) {
                     funcionario.incrementaNumeroTentativasSemPermissao();
                     this.novoEvento(Evento.PERMISSAO_INSUFICIENTE, matricula, "");
                     if (funcionario.getNumeroTentativasSemPermissao() > 3) {

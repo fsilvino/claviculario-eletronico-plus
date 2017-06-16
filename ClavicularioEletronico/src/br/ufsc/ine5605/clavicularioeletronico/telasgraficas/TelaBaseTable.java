@@ -21,13 +21,13 @@ import javax.swing.table.TableModel;
  */
 public abstract class TelaBaseTable<E> extends JFrame {
 
-    private JTable table;
-    private JScrollPane spTable;
-    private JButton btInclui;
-    private JButton btAltera;
-    private JButton btExclui;
-    private ActionManager actManager;
-    private final List<ITelaBaseTableObserver> observers;
+    protected JTable table;
+    protected JScrollPane spTable;
+    protected JButton btInclui;
+    protected JButton btAltera;
+    protected JButton btExclui;
+    protected ActionManager actManager;
+    protected final List<ITelaBaseTableObserver> observers;
     protected List<E> lista;
     
     public TelaBaseTable(String title) {

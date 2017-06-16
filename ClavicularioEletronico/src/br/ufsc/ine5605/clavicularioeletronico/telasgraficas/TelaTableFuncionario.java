@@ -48,7 +48,7 @@ public class TelaTableFuncionario extends TelaBaseTable<DadosFuncionario> {
     
     @Override
     protected Dimension getTamanhoTela() {
-        return new Dimension(500, 350);
+        return new Dimension(600, 350);
     }
 
     @Override
@@ -56,10 +56,11 @@ public class TelaTableFuncionario extends TelaBaseTable<DadosFuncionario> {
         DefaultTableModel tbModel = new DefaultTableModel();
         tbModel.addColumn("Matrícula");
         tbModel.addColumn("Nome");
+        tbModel.addColumn("Cargo");
         tbModel.addColumn("Telefone");
         
         for (DadosFuncionario funcionario : this.lista) {
-            tbModel.addRow(new Object[] { funcionario.matricula, funcionario.nome, funcionario.telefone });
+            tbModel.addRow(new Object[] { funcionario.matricula, funcionario.nome, funcionario.cargo.descricao, funcionario.telefone });
         }
         
         return tbModel;

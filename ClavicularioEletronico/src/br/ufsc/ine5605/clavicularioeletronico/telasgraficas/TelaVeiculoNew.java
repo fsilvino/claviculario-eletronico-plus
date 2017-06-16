@@ -160,7 +160,19 @@ public class TelaVeiculoNew extends TelaBaseCadastro<DadosVeiculo> {
     protected int getLinhaBtOk() {
         return 5;
     }
-    
-    
+
+    @Override
+    public void abreAlteracao(DadosVeiculo item) {
+        this.tfPlaca.setEnabled(false);
+        this.tfQuilometragemAtual.setEnabled(false);
+        super.abreAlteracao(item);
+    }
+
+    @Override
+    public void abreInclusao() {
+        this.tfPlaca.setEnabled(true);
+        this.tfQuilometragemAtual.setEnabled(true);
+        super.abreInclusao();
+    }
     
 }

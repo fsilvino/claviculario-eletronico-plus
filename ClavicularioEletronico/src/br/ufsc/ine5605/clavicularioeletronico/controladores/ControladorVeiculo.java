@@ -9,6 +9,7 @@ import br.ufsc.ine5605.clavicularioeletronico.telasgraficas.TelaTableVeiculo;
 import br.ufsc.ine5605.clavicularioeletronico.telasgraficas.TelaVeiculoNew;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import javax.swing.JOptionPane;
 
@@ -108,7 +109,7 @@ public class ControladorVeiculo extends ControladorCadastroNew<TelaTableVeiculo,
                 throw new Exception("Este veiculo esta sendo utilizado! Para excluir ele deve ser devolvido primeiro.");
             }
 
-            ControladorPermissaoUsoVeiculo.getInstance().excluirPermissoesVeiculo(veiculo);
+            ControladorFuncionario.getInstance().excluirPermissoesVeiculo(veiculo);
             getDao().remove(veiculo.getPlaca());
         } catch (Exception e) {
             JOptionPane.showMessageDialog(telaTb, e.getMessage());
@@ -187,6 +188,17 @@ public class ControladorVeiculo extends ControladorCadastroNew<TelaTableVeiculo,
             return (Veiculo)this.getDao().getList().toArray()[0];
         }
         return null;
+    }
+
+    public String[] getPlacas() {
+        Collection<Veiculo> veiculos = this.getDao().getList();
+        String[] placas = new String[veiculos.size()];
+        int i = 0;
+        for (Veiculo veiculo : veiculos) {
+            placas[i] = veiculo.getPlaca();
+            i++;
+        }
+        return placas;
     }
     
 }
