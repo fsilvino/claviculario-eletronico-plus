@@ -173,6 +173,18 @@ public class TelaFuncionarioNew extends TelaBaseCadastro<DadosFuncionario> {
     protected int getLinhaBtOk() {
         return 5;
     }
+
+    @Override
+    public void abreAlteracao(DadosFuncionario item) {
+        this.tfMatricula.setEnabled(false);
+        super.abreAlteracao(item);
+    }
+
+    @Override
+    public void abreInclusao() {
+        this.tfMatricula.setEnabled(true);
+        super.abreInclusao(); //To change body of generated methods, choose Tools | Templates.
+    }
     
     
     

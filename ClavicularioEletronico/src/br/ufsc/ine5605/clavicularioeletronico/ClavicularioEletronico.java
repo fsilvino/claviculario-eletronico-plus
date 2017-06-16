@@ -1,6 +1,7 @@
 package br.ufsc.ine5605.clavicularioeletronico;
 
 import br.ufsc.ine5605.clavicularioeletronico.controladores.ControladorSistema;
+import java.util.HashMap;
 
 /**
  * Classe main do sistema
