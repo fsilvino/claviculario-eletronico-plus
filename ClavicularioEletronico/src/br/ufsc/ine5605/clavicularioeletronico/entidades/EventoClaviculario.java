@@ -1,6 +1,7 @@
 package br.ufsc.ine5605.clavicularioeletronico.entidades;
 
 import br.ufsc.ine5605.clavicularioeletronico.enums.Evento;
+import br.ufsc.ine5605.clavicularioeletronico.transferencias.DadosEventoClaviculario;
 import java.io.Serializable;
 import java.util.Calendar;
 
@@ -10,7 +11,7 @@ public class EventoClaviculario implements Serializable {
     
     private Evento evento;
     private Calendar dataHora;
-    private int matricula;
+    private Integer matricula;
     private String placa;
 
     public EventoClaviculario(Evento evento, Calendar dataHora, int matricula, String placa) {
@@ -36,11 +37,11 @@ public class EventoClaviculario implements Serializable {
         this.dataHora = dataHora;
     }
 
-    public int getMatricula() {
+    public Integer getMatricula() {
         return matricula;
     }
 
-    public void setMatricula(int matricula) {
+    public void setMatricula(Integer matricula) {
         this.matricula = matricula;
     }
 
@@ -50,6 +51,10 @@ public class EventoClaviculario implements Serializable {
 
     public void setPlaca(String placa) {
         this.placa = placa;
+    }
+    
+    public DadosEventoClaviculario getDTO() {
+        return new DadosEventoClaviculario(getEvento(), getDataHora(), getMatricula(), getPlaca());
     }
     
 }
