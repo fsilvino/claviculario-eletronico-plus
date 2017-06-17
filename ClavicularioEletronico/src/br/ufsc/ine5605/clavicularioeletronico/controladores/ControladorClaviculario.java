@@ -9,9 +9,11 @@ import br.ufsc.ine5605.clavicularioeletronico.enums.Cargo;
 import br.ufsc.ine5605.clavicularioeletronico.enums.Evento;
 import br.ufsc.ine5605.clavicularioeletronico.excecoes.MatriculaNaoCadastradaException;
 import br.ufsc.ine5605.clavicularioeletronico.excecoes.PlacaNaoCadastradaException;
+import br.ufsc.ine5605.clavicularioeletronico.persistencia.EventoClavicularioDAO;
 import br.ufsc.ine5605.clavicularioeletronico.telas.TelaClaviculario;
-import br.ufsc.ine5605.clavicularioeletronico.transferencias.ItemListaCadastro;
-import br.ufsc.ine5605.clavicularioeletronico.transferencias.Listavel;
+import br.ufsc.ine5605.clavicularioeletronico.transferencias.DadosEventoClaviculario;
+//import br.ufsc.ine5605.clavicularioeletronico.transferencias.ItemListaCadastro;
+//import br.ufsc.ine5605.clavicularioeletronico.transferencias.Listavel;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -48,7 +50,7 @@ public class ControladorClaviculario {
     }
     
     public void inicia() {
-        tela.exibeMenu();
+//        tela.exibeMenu();
     }
     
     public Veiculo retirarChave(int matricula) throws Exception {
@@ -165,71 +167,32 @@ public class ControladorClaviculario {
         SaidaVeiculo novaSaida = new SaidaVeiculo(veiculo, funcionario, dataHora);
         this.veiculosFora.add(novaSaida);
         this.novoEvento(Evento.ACESSO_PERMITIDO, funcionario.getMatricula(), veiculo.getPlaca());
-    } 
+    }
     
-     //relatório de acessos a veículos, onde seja possível pesquisar/filtrar por:
-     //motivo de negação/permissão, pela matrícula do funcionário ou pela placa do veículo.
-     public List<Listavel> geraRelatorioPorEvento (Evento evento) {
-         
-         List<Listavel> relatorio = new ArrayList();
-         for (EventoClaviculario item : log) {
-             if (item.getEvento().equals(evento)) {
-                 String descricao = String.format("%s\t%s\t%s\t%s",                       
-                         item.getDataHora().getTime().toString(),
-                         item.getEvento(),
-                         item.getMatricula(),
-                         item.getPlaca());
-                 relatorio.add(new ItemListaCadastro(descricao));
-             }
+    private List<DadosEventoClaviculario> getListaRelatorio(ArrayList<EventoClaviculario> eventos) {
+        List<DadosEventoClaviculario> relatorio = new ArrayList<>();
+         for (EventoClaviculario item : eventos) {
+             relatorio.add(item.getDTO());
          }
          return relatorio;
-     }
+    }
+    
+    //relatório de acessos a veículos, onde seja possível pesquisar/filtrar por:
+    //motivo de negação/permissão, pela matrícula do funcionário ou pela placa do veículo.
+    public List<DadosEventoClaviculario> geraRelatorioPorEvento (Evento evento) {
+        return getListaRelatorio(EventoClavicularioDAO.getInstance().getListByEvento(evento));
+    }
      
-    public List<Listavel> geraRelatorioPorMatricula(int matricula) {
-         
-         List<Listavel> relatorio = new ArrayList();
-         for (EventoClaviculario item : log) {
-             if (item.getMatricula() == matricula) {
-                 String descricao = String.format("%s\t%s\t%s\t%s",                       
-                         item.getDataHora().getTime().toString(),
-                         item.getEvento(),
-                         item.getMatricula(),
-                         item.getPlaca());
-                 relatorio.add(new ItemListaCadastro(descricao));
-             }
-         }
-         return relatorio;
-     }
+    public List<DadosEventoClaviculario> geraRelatorioPorMatricula(Integer matricula) {
+        return getListaRelatorio(EventoClavicularioDAO.getInstance().getListByMatricula(matricula));
+    }
      
-     public List<Listavel> geraRelatorioPorVeiculo(String placa) {
-         
-         List<Listavel> relatorio = new ArrayList();
-         for (EventoClaviculario item : log) {
-             if (item.getPlaca().equals(placa)) {
-                 String descricao = String.format("%s\t%s\t%s\t%s",                       
-                         item.getDataHora().getTime().toString(),
-                         item.getEvento(),
-                         item.getMatricula(),
-                         item.getPlaca());
-                 relatorio.add(new ItemListaCadastro(descricao));
-             }
-         }
-         return relatorio;
-     }
+    public List<DadosEventoClaviculario> geraRelatorioPorVeiculo(String placa) {
+        return getListaRelatorio(EventoClavicularioDAO.getInstance().getListByPlaca(placa));
+    }
      
-     public List<Listavel> geraRelatorioCompleto() {
-         
-        List<Listavel> relatorio = new ArrayList();
-        for (EventoClaviculario item : log) {
-            String descricao = String.format("%s\t%s\t%s\t%s",                       
-                    item.getDataHora().getTime().toString(),
-                    item.getEvento(),
-                    item.getMatricula(),
-                    item.getPlaca());
-                relatorio.add(new ItemListaCadastro(descricao));
-   
-        }
-        return relatorio;
+     public List<DadosEventoClaviculario> geraRelatorioCompleto() {
+         return getListaRelatorio(new ArrayList<>(EventoClavicularioDAO.getInstance().getList()));
     }
     
 }
