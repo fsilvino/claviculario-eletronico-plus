@@ -4,12 +4,15 @@ import java.util.Date;
 import br.ufsc.ine5605.clavicularioeletronico.enums.Cargo;
 import br.ufsc.ine5605.clavicularioeletronico.excecoes.ParametroNuloException;
 import br.ufsc.ine5605.clavicularioeletronico.excecoes.PermissaoDeUsoVeiculoJaCadastradaException;
+import br.ufsc.ine5605.clavicularioeletronico.transferencias.DadosFuncionario;
+import br.ufsc.ine5605.clavicularioeletronico.transferencias.DadosVeiculo;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 
 public class Funcionario implements Serializable {
+    
+    private static final long serialVersionUID = 1L;
 
     private Integer matricula;
     private String nome;
@@ -125,6 +128,15 @@ public class Funcionario implements Serializable {
     
     public void limpaVeiculos() {
         this.veiculos.clear();
+    }
+    
+    public DadosFuncionario getDTO() {
+        HashMap<String, DadosVeiculo> listaVeiculos = new HashMap<>();
+        for (Veiculo veiculo : getVeiculos()) {
+            DadosVeiculo dadosVeiculo = veiculo.getDTO();
+            listaVeiculos.put(dadosVeiculo.placa, dadosVeiculo);
+        }
+        return new DadosFuncionario(getMatricula(), getNome(), getNascimento(), getTelefone(), getCargo(), isBloqueado(), listaVeiculos);
     }
     
 }

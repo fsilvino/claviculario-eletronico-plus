@@ -1,9 +1,12 @@
 package br.ufsc.ine5605.clavicularioeletronico.entidades;
 
+import br.ufsc.ine5605.clavicularioeletronico.transferencias.DadosVeiculo;
 import java.io.Serializable;
 
 public class Veiculo implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    
     private String placa;
     private String modelo;
     private String marca;
@@ -48,6 +51,10 @@ public class Veiculo implements Serializable {
 
     public void setQuilometragemAtual(int quilometragemAtual) {
         this.quilometragemAtual = quilometragemAtual;
+    }
+    
+    public DadosVeiculo getDTO() {
+        return new DadosVeiculo(getPlaca(), getModelo(), getMarca(), getAno(), getQuilometragemAtual());
     }
 
 }

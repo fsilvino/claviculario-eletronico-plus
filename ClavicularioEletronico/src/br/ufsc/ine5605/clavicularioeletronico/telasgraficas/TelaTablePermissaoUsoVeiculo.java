@@ -64,17 +64,13 @@ public class TelaTablePermissaoUsoVeiculo extends TelaBaseTable<DadosVeiculo> {
     @Override
     protected TableModel getTableModel() {
         DefaultTableModel tbModel = new DefaultTableModel();
-        //tbModel.addColumn("Matrícula");
-        //tbModel.addColumn("Nome");
-        //tbModel.addColumn("Telefone");
         tbModel.addColumn("Placa");
-        tbModel.addColumn("Modelo");
         tbModel.addColumn("Marca");
+        tbModel.addColumn("Modelo");
         tbModel.addColumn("Ano");
         
         for (DadosVeiculo veiculo : this.lista) {
-            tbModel.addRow(new Object[] { //dadosFuncionario.matricula, dadosFuncionario.nome, dadosFuncionario.telefone,
-                                          veiculo.placa, veiculo.modelo, veiculo.marca, veiculo.ano });
+            tbModel.addRow(new Object[] { veiculo.placa, veiculo.marca, veiculo.modelo, veiculo.ano });
         }
         
         return tbModel;

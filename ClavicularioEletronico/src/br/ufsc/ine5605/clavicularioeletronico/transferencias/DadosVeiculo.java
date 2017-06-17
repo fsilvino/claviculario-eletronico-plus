@@ -15,10 +15,6 @@ public class DadosVeiculo {
     public int ano;
     public int quilometragemAtual;
     
-    public static DadosVeiculo from(Veiculo veiculo) {
-        return new DadosVeiculo(veiculo.getPlaca(), veiculo.getModelo(), veiculo.getMarca(), veiculo.getAno(), veiculo.getQuilometragemAtual());
-    }
-
     public DadosVeiculo() {
 
     }

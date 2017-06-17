@@ -15,5 +15,7 @@ public enum Evento implements Serializable {
     ACESSO_BLOQUEADO,
     USUARIO_BLOQUEADO,
     VEICULO_DEVOLVIDO;
+    
+    private static final long serialVersionUID = 1L;
 
 }

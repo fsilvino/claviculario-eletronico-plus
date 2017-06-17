@@ -2,6 +2,7 @@ package br.ufsc.ine5605.clavicularioeletronico.telasgraficas;
 
 import br.ufsc.ine5605.clavicularioeletronico.enums.Cargo;
 import br.ufsc.ine5605.clavicularioeletronico.transferencias.DadosFuncionario;
+import br.ufsc.ine5605.clavicularioeletronico.util.Conversao;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -141,7 +142,7 @@ public class TelaFuncionarioNew extends TelaBaseCadastro<DadosFuncionario> {
             this.cbCargo.setSelectedIndex(-1);
         }
         if (dadosFuncionario.nascimento != null) {
-            this.tfNascimento.setText(new SimpleDateFormat("dd/MM/yyyy").format(dadosFuncionario.nascimento));
+            this.tfNascimento.setText(Conversao.getInstance().dateToStr(dadosFuncionario.nascimento));
         } else {
             this.tfNascimento.setText("");
         }
@@ -157,7 +158,7 @@ public class TelaFuncionarioNew extends TelaBaseCadastro<DadosFuncionario> {
             funcionario.cargo = Cargo.values()[this.cbCargo.getSelectedIndex()];
         }
         try {
-            funcionario.nascimento = new SimpleDateFormat("dd/MM/yyyy").parse(this.tfNascimento.getText());
+            funcionario.nascimento = Conversao.getInstance().strToDate(this.tfNascimento.getText());
         } catch (ParseException e) {            
         }
         funcionario.telefone = this.tfTelefone.getText();

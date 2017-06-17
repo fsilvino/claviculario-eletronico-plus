@@ -130,11 +130,7 @@ public class ControladorVeiculo extends ControladorCadastroNew<TelaTableVeiculo,
     protected List<DadosVeiculo> getListaDTO() {
         ArrayList<DadosVeiculo> lista = new ArrayList<>();
         for (Veiculo veiculo : getDao().getList()) {
-            lista.add(new DadosVeiculo(veiculo.getPlaca(), 
-                                       veiculo.getModelo(), 
-                                       veiculo.getMarca(), 
-                                       veiculo.getAno(),
-                                       veiculo.getQuilometragemAtual()));
+            lista.add(veiculo.getDTO());
         }
         return lista;
     }
