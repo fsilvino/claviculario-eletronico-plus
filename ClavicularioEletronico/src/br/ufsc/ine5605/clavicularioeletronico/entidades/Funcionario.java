@@ -2,7 +2,12 @@ package br.ufsc.ine5605.clavicularioeletronico.entidades;
 
 import java.util.Date;
 import br.ufsc.ine5605.clavicularioeletronico.enums.Cargo;
+import br.ufsc.ine5605.clavicularioeletronico.excecoes.ParametroNuloException;
+import br.ufsc.ine5605.clavicularioeletronico.excecoes.PermissaoDeUsoVeiculoJaCadastradaException;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 
 public class Funcionario implements Serializable {
 
@@ -13,6 +18,11 @@ public class Funcionario implements Serializable {
     private boolean bloqueado;
     private Cargo cargo;
     private int numeroTentativasSemPermissao;
+    private final HashMap<String, Veiculo> veiculos;
+    
+    public Funcionario() {
+        this.veiculos = new HashMap<>();
+    }
 
     public void incrementaNumeroTentativasSemPermissao() {
         this.numeroTentativasSemPermissao++;
@@ -72,6 +82,49 @@ public class Funcionario implements Serializable {
 
     public void setCargo(Cargo cargo) {
         this.cargo = cargo;
+    }
+    
+    public boolean podeAcessarVeiculo(Veiculo veiculo) {
+        if (veiculo != null) {
+            return podeAcessarVeiculo(veiculo.getPlaca());
+        }
+        throw new ParametroNuloException("Veículo");
+    }
+    
+    public boolean podeAcessarVeiculo(String placa) {
+        return this.veiculos.get(placa) != null;
+    }
+    
+    public void putVeiculo(Veiculo veiculo) throws PermissaoDeUsoVeiculoJaCadastradaException {
+        if (veiculo != null) {
+            if (!podeAcessarVeiculo(veiculo.getPlaca())) {
+                this.veiculos.put(veiculo.getPlaca(), veiculo);
+            } else {
+                throw new PermissaoDeUsoVeiculoJaCadastradaException(this, veiculo);
+            }
+        } else {
+            throw new ParametroNuloException("Veículo");
+        }
+    }
+    
+    public void removeVeiculo(Veiculo veiculo) {
+        if (veiculo != null) {
+            removeVeiculo(veiculo.getPlaca());
+        } else {
+            throw new ParametroNuloException("Veículo");
+        }
+    }
+    
+    public void removeVeiculo(String placa) {
+        this.veiculos.remove(placa);
+    }
+    
+    public ArrayList<Veiculo> getVeiculos() {
+        return new ArrayList<>(this.veiculos.values());
+    }
+    
+    public void limpaVeiculos() {
+        this.veiculos.clear();
     }
     
 }

@@ -18,6 +18,7 @@ import br.ufsc.ine5605.clavicularioeletronico.telasgraficas.TelaPermissaoUsoVeic
 import br.ufsc.ine5605.clavicularioeletronico.telasgraficas.TelaTableFuncionario;
 import br.ufsc.ine5605.clavicularioeletronico.telasgraficas.TelaTablePermissaoUsoVeiculo;
 import br.ufsc.ine5605.clavicularioeletronico.transferencias.DadosPermissaoUsoVeiculo;
+import br.ufsc.ine5605.clavicularioeletronico.transferencias.DadosVeiculo;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
@@ -130,6 +131,13 @@ public class ControladorFuncionario extends ControladorCadastroNew<TelaTableFunc
     }
 
     @Override
+    protected String getMensagemConfirmacaoExclusao(DadosFuncionario dadosFuncionario) {
+        return super.getMensagemConfirmacaoExclusao(dadosFuncionario) + 
+               "\nMatrícula: " + dadosFuncionario.matricula + 
+               "\nNome: " + dadosFuncionario.nome;
+    }
+    
+    @Override
     protected void executaExclusao(DadosFuncionario dadosFuncionario) {
         try {
             Funcionario funcionario = findFuncionarioPelaMatricula(dadosFuncionario.matricula);
@@ -141,8 +149,8 @@ public class ControladorFuncionario extends ControladorCadastroNew<TelaTableFunc
                 throw new Exception("Este funcionario possui chave(s) a ser(em) devolvida(s).\n" +
                                     "Nao sera possivel excluir ate que todas sejam devolvidas.");
             }
-            excluirPermissoesFuncionario(funcionario);
-            getDao().remove(dadosFuncionario.matricula);
+            funcionario.limpaVeiculos();
+            getDao().remove(funcionario.getMatricula());
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e.getMessage());
         }
@@ -196,16 +204,11 @@ public class ControladorFuncionario extends ControladorCadastroNew<TelaTableFunc
 
     public void abreCadastroPermissaoUsoVeiculo(Integer matricula) {
         try {
-            this.telaTablePermissoes.setFuncionario(matricula, getFuncionarioPelaMatricula(matricula).getNome());
-            this.atualizaListaTelaPermissoes(matricula);
+            this.telaTablePermissoes.setDadosFuncionario(DadosFuncionario.from(getFuncionarioPelaMatricula(matricula)));
             this.telaTablePermissoes.setVisible(true);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e.getMessage());
         }
-    }
-    
-    protected void atualizaListaTelaPermissoes(Integer matricula) throws Exception {
-        this.telaTablePermissoes.setLista(getListaPermissoes(matricula));
     }
     
     /**** Permissões de Uso de Veículos ****/
@@ -225,12 +228,8 @@ public class ControladorFuncionario extends ControladorCadastroNew<TelaTableFunc
         }
         
         Veiculo veiculo = ControladorVeiculo.getInstance().getVeiculoPelaPlaca(placa);
-        
-        if (permissaoExiste(funcionario, veiculo)) {
-            throw new Exception(String.format("O funcionario %s - %s ja possui permissao para acessar o veiculo %s.", funcionario.getMatricula(), funcionario.getNome(), veiculo.getPlaca()));
-        }
-        
-        PermissaoUsoVeiculoDAO.getInstance().add(new PermissaoUsoVeiculo(funcionario, veiculo));
+        funcionario.putVeiculo(veiculo);
+        getDao().persist();
     }
     
     /**
@@ -240,111 +239,69 @@ public class ControladorFuncionario extends ControladorCadastroNew<TelaTableFunc
      * @throws Exception Caso os parâmtros sejam inválidos ou não exista a permissão
      */
     public void excluiPermissao(Integer matricula, String placa) throws Exception {
-        PermissaoUsoVeiculo permissao = findPermissaoUsoVeiculo(matricula, placa);
-        if (permissao == null) {
-            throw new Exception(String.format("O funcionario de matricula %s nao possui permissao de uso para o veiculo de placa %s", matricula, placa));
-        }
-        if (permissao.getFuncionario().getCargo() == Cargo.DIRETORIA) {
+        Funcionario funcionario = getFuncionarioPelaMatricula(matricula);
+        if (funcionario.getCargo() == Cargo.DIRETORIA) {
             throw new CadastroInvalidoPermissaoUsoVeiculoDiretoria();
         }
-        PermissaoUsoVeiculoDAO.getInstance().remove(permissao);
+        funcionario.removeVeiculo(placa);
+        getDao().persist();
     }
     
-    public List<PermissaoUsoVeiculo> getPermissoesFuncionario(Integer matricula) throws Exception {
+    public List<Veiculo> getPermissoesFuncionario(Integer matricula) throws Exception {
         Funcionario funcionario = getFuncionarioPelaMatricula(matricula);
         
         if (funcionario.getCargo() == Cargo.DIRETORIA) {
             throw new CadastroInvalidoPermissaoUsoVeiculoDiretoria();
         }
         
-        List<PermissaoUsoVeiculo> lista = new ArrayList<>();
-        for (PermissaoUsoVeiculo permissao : PermissaoUsoVeiculoDAO.getInstance().getList()) {
-            if (permissao.getFuncionario().getMatricula().equals(matricula)) {
-                lista.add(permissao);
-            }
-        }
-        return lista;
+        return funcionario.getVeiculos();
     }
     
-    public List<PermissaoUsoVeiculo> getPermissoesVeiculo(String placa) {
-        List<PermissaoUsoVeiculo> lista = new ArrayList<>();
-        for (PermissaoUsoVeiculo permissao : PermissaoUsoVeiculoDAO.getInstance().getList()) {
-            if (permissao.getVeiculo().getPlaca().equals(placa)) {
-                lista.add(permissao);
-            }
-        }
-        return lista;
-    }
-    
-    public List<DadosPermissaoUsoVeiculo> getListaPermissoes(Integer matricula) throws Exception {
-        List<DadosPermissaoUsoVeiculo> lista = new ArrayList<>();
-        for (PermissaoUsoVeiculo permissao : getPermissoesFuncionario(matricula)) {
-            Funcionario funcionario = permissao.getFuncionario();
-            Veiculo veiculo = permissao.getVeiculo();
-            lista.add(new DadosPermissaoUsoVeiculo(funcionario.getMatricula(), funcionario.getNome(), funcionario.getTelefone(), 
-                                                   veiculo.getPlaca(), veiculo.getModelo(), veiculo.getMarca(), veiculo.getAno()));
-        }
-        return lista;
-    }
-    
-    private PermissaoUsoVeiculo findPermissaoUsoVeiculo(Funcionario funcionario, Veiculo veiculo) {
-        for (PermissaoUsoVeiculo permissao : PermissaoUsoVeiculoDAO.getInstance().getList()) {
-            if (permissao.getFuncionario().getMatricula().equals(funcionario.getMatricula()) && permissao.getVeiculo().getPlaca().equals(veiculo.getPlaca())) {
-                return permissao;
-            }
-        }
-        return null;
-    }
-    
-    private PermissaoUsoVeiculo findPermissaoUsoVeiculo(Integer matricula, String placa) throws Exception {
+    public List<DadosVeiculo> getListaPermissoes(Integer matricula) throws Exception {
         Funcionario funcionario = getFuncionarioPelaMatricula(matricula);
-        
-        if (funcionario.getCargo() == Cargo.DIRETORIA) {
-            throw new CadastroInvalidoPermissaoUsoVeiculoDiretoria();
+        List<DadosVeiculo> lista = new ArrayList<>();
+        for (Veiculo veiculo : funcionario.getVeiculos()) {
+            lista.add(new DadosVeiculo(veiculo.getPlaca(), veiculo.getModelo(), veiculo.getMarca(), veiculo.getAno(), veiculo.getQuilometragemAtual()));
         }
-        
-        Veiculo veiculo = ControladorVeiculo.getInstance().getVeiculoPelaPlaca(placa);
-        
-        return findPermissaoUsoVeiculo(funcionario, veiculo);
-    }
-    
-    public boolean permissaoExiste(Funcionario funcionario, Veiculo veiculo) throws Exception {
-        return findPermissaoUsoVeiculo(funcionario, veiculo) != null;
-    }
-    
-    public void excluirPermissoesFuncionario(Funcionario funcionario) throws Exception {
-        if (funcionario.getCargo() != Cargo.DIRETORIA) {
-            for (PermissaoUsoVeiculo permissao : getPermissoesFuncionario(funcionario.getMatricula())) {
-                PermissaoUsoVeiculoDAO.getInstance().getList().remove(permissao);
-            }
-        }
+        return lista;
     }
     
     public void excluirPermissoesVeiculo(Veiculo veiculo) {
-        for (PermissaoUsoVeiculo permissao : getPermissoesVeiculo(veiculo.getPlaca())) {
-            PermissaoUsoVeiculoDAO.getInstance().remove(permissao);
+        for (Funcionario funcionario : getDao().getList()) {
+            funcionario.removeVeiculo(veiculo);
         }
     }
     
-    private class CadastroPermissoesObserver implements ITelaBaseTableObserver<DadosPermissaoUsoVeiculo>, ITelaBaseCadastroObserver {
+    private class CadastroPermissoesObserver implements ITelaBaseTableObserver<DadosVeiculo>, ITelaBaseCadastroObserver {
 
+        private DadosPermissaoUsoVeiculo getDadosPermissao(DadosFuncionario dadosFuncionario, DadosVeiculo dadosVeiculo) {
+            return new DadosPermissaoUsoVeiculo(dadosFuncionario.matricula, dadosFuncionario.nome, dadosFuncionario.telefone,
+                                                dadosVeiculo.placa, dadosVeiculo.modelo, dadosVeiculo.marca, dadosVeiculo.ano);
+        }
+        
         @Override
         public void inclui() {
             telaPermissao.setPlacas(ControladorVeiculo.getInstance().getPlacas());
-            telaPermissao.abreInclusao(telaTablePermissoes.getDadosComFuncionarioParaIncluir());
+            telaPermissao.abreInclusao(getDadosPermissao(telaTablePermissoes.getDadosFuncionario(), new DadosVeiculo()));
         }
 
         @Override
-        public void altera(DadosPermissaoUsoVeiculo item) {
-            telaPermissao.abreAlteracao(item);
+        public void altera(DadosVeiculo dadosVeiculo) {
+            telaPermissao.abreAlteracao(getDadosPermissao(telaTablePermissoes.getDadosFuncionario(), dadosVeiculo));
         }
 
         @Override
-        public void exclui(DadosPermissaoUsoVeiculo item) {
-            if (JOptionPane.showConfirmDialog(null, "Deseja realmente excluir?", "Confirmação", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+        public void exclui(DadosVeiculo dadosVeiculo) {
+            DadosFuncionario dadosFuncionario = telaTablePermissoes.getDadosFuncionario();
+            if (JOptionPane.showConfirmDialog(null, "Deseja realmente excluir a permissão?\n" +
+                                                    "Funcionário: " + dadosFuncionario.nome + "\n" +
+                                                    "Veículo: " + dadosVeiculo.placa, "Confirmação", 
+                                              JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
                 try {
-                    excluiPermissao(item.matriculaFuncionario, item.placaVeiculo);
-                    atualizaListaTelaPermissoes(item.matriculaFuncionario);
+                    Integer matricula = dadosFuncionario.matricula;
+                    excluiPermissao(matricula, dadosVeiculo.placa);
+                    telaTablePermissoes.setDadosFuncionario(DadosFuncionario.from(getFuncionarioPelaMatricula(matricula)));
+                    //atualizaListaTelaPermissoes(item.matriculaFuncionario);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(null, e.getMessage());
                 }
@@ -358,7 +315,8 @@ public class ControladorFuncionario extends ControladorCadastroNew<TelaTableFunc
                 if (AcoesCadastro.ACAO_INCLUI.equals(acao)) {
                     incluiPermissao(item.matriculaFuncionario, item.placaVeiculo);
                 }
-                atualizaListaTelaPermissoes(item.matriculaFuncionario);
+                telaTablePermissoes.setDadosFuncionario(DadosFuncionario.from(getFuncionarioPelaMatricula(item.matriculaFuncionario)));
+                //atualizaListaTelaPermissoes(item.matriculaFuncionario);
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, e.getMessage());
             }

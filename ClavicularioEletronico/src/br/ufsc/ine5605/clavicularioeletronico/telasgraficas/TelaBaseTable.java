@@ -90,6 +90,7 @@ public abstract class TelaBaseTable<E> extends JFrame {
     
     protected abstract Dimension getTamanhoTela();
     protected abstract TableModel getTableModel();
+    protected abstract int getTableGridY();
 
     protected void init() {
         Container container = getContentPane();
@@ -106,11 +107,14 @@ public abstract class TelaBaseTable<E> extends JFrame {
         this.table.setFillsViewportHeight(true);
         GridBagConstraints constraint = new GridBagConstraints();
         
+        int y = getTableGridY();
+        
         constraint.fill = GridBagConstraints.CENTER;
         constraint.gridwidth = 4;
         constraint.gridheight = 3;
         constraint.gridx = 0;
-        constraint.gridy = 0;
+        constraint.gridy = y++;
+        y += constraint.gridheight - 1;
         
         this.spTable = new JScrollPane(this.table);
         container.add(this.spTable, constraint);
@@ -121,7 +125,7 @@ public abstract class TelaBaseTable<E> extends JFrame {
         constraint.gridwidth = 1;
         constraint.gridheight = 1;
         constraint.gridx = 0;
-        constraint.gridy = 4;
+        constraint.gridy = y;
         container.add(this.btInclui, constraint);
         
         this.btAltera = new JButton("Altera");
@@ -130,7 +134,7 @@ public abstract class TelaBaseTable<E> extends JFrame {
         constraint.gridwidth = 1;
         constraint.gridheight = 1;
         constraint.gridx = 1;
-        constraint.gridy = 4;
+        constraint.gridy = y;
         container.add(this.btAltera, constraint);
         
         this.btExclui = new JButton("Exclui");
@@ -139,7 +143,7 @@ public abstract class TelaBaseTable<E> extends JFrame {
         constraint.gridwidth = 1;
         constraint.gridheight = 1;
         constraint.gridx = 2;
-        constraint.gridy = 4;
+        constraint.gridy = y;
         container.add(this.btExclui, constraint);
         
         this.atualizaDados();
