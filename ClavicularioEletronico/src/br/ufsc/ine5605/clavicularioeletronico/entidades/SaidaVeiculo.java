@@ -10,6 +10,8 @@ import java.util.Calendar;
  */
 public class SaidaVeiculo implements Serializable {
     
+    private static final long serialVersionUID = 1L;
+    
     private Veiculo veiculo;
     private Funcionario funcionario;
     private Calendar dataHora;

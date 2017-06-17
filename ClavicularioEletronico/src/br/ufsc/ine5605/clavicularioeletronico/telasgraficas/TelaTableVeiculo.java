@@ -18,7 +18,7 @@ public class TelaTableVeiculo extends TelaBaseTable<DadosVeiculo> {
     
     @Override
     protected Dimension getTamanhoTela() {
-        return new Dimension(500, 350);
+        return new Dimension(600, 350);
     }
 
     @Override
@@ -30,12 +30,13 @@ public class TelaTableVeiculo extends TelaBaseTable<DadosVeiculo> {
     protected TableModel getTableModel() {
         DefaultTableModel tbModel = new DefaultTableModel();
         tbModel.addColumn("Placa");
+        tbModel.addColumn("Marca");
         tbModel.addColumn("Modelo");
         tbModel.addColumn("Ano");
         tbModel.addColumn("KM");
         
         for (DadosVeiculo veiculo : this.lista) {
-            tbModel.addRow(new Object[] { veiculo.placa, veiculo.modelo, veiculo.ano, veiculo.quilometragemAtual });
+            tbModel.addRow(new Object[] { veiculo.placa, veiculo.marca, veiculo.modelo, veiculo.ano, veiculo.quilometragemAtual });
         }
         
         return tbModel;

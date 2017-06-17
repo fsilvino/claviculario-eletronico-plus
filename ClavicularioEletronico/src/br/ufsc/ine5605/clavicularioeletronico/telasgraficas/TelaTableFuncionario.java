@@ -2,6 +2,7 @@ package br.ufsc.ine5605.clavicularioeletronico.telasgraficas;
 
 import br.ufsc.ine5605.clavicularioeletronico.controladores.ControladorFuncionario;
 import br.ufsc.ine5605.clavicularioeletronico.transferencias.DadosFuncionario;
+import br.ufsc.ine5605.clavicularioeletronico.util.Conversao;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -63,9 +64,10 @@ public class TelaTableFuncionario extends TelaBaseTable<DadosFuncionario> {
         tbModel.addColumn("Nome");
         tbModel.addColumn("Cargo");
         tbModel.addColumn("Telefone");
+        tbModel.addColumn("Nascimento");
         
         for (DadosFuncionario funcionario : this.lista) {
-            tbModel.addRow(new Object[] { funcionario.matricula, funcionario.nome, funcionario.cargo.descricao, funcionario.telefone });
+            tbModel.addRow(new Object[] { funcionario.matricula, funcionario.nome, funcionario.cargo.descricao, funcionario.telefone, Conversao.getInstance().dateToStr(funcionario.nascimento) });
         }
         
         return tbModel;

@@ -20,15 +20,6 @@ public class DadosFuncionario {
     public Cargo cargo;
     public boolean bloqueado;
     public HashMap<String, DadosVeiculo> veiculos;
-    
-    public static DadosFuncionario from(Funcionario funcionario) {
-        HashMap<String, DadosVeiculo> veiculos = new HashMap<>();
-        for (Veiculo veiculo : funcionario.getVeiculos()) {
-            DadosVeiculo dadosVeiculo = DadosVeiculo.from(veiculo);
-            veiculos.put(dadosVeiculo.placa, dadosVeiculo);
-        }
-        return new DadosFuncionario(funcionario.getMatricula(), funcionario.getNome(), funcionario.getNascimento(), funcionario.getTelefone(), funcionario.getCargo(), funcionario.isBloqueado(), veiculos);
-    }
 
     public DadosFuncionario() {
         this(null, null, null, null, null, false, null);

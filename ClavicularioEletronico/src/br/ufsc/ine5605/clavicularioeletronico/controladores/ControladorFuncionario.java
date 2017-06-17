@@ -2,14 +2,12 @@ package br.ufsc.ine5605.clavicularioeletronico.controladores;
 
 import br.ufsc.ine5605.clavicularioeletronico.transferencias.DadosFuncionario;
 import br.ufsc.ine5605.clavicularioeletronico.entidades.Funcionario;
-import br.ufsc.ine5605.clavicularioeletronico.entidades.PermissaoUsoVeiculo;
 import br.ufsc.ine5605.clavicularioeletronico.entidades.Veiculo;
 import br.ufsc.ine5605.clavicularioeletronico.enums.Cargo;
 import br.ufsc.ine5605.clavicularioeletronico.excecoes.CadastroInvalidoPermissaoUsoVeiculoDiretoria;
 import br.ufsc.ine5605.clavicularioeletronico.excecoes.MatriculaJaCadastradaException;
 import br.ufsc.ine5605.clavicularioeletronico.excecoes.MatriculaNaoCadastradaException;
 import br.ufsc.ine5605.clavicularioeletronico.persistencia.FuncionarioDAO;
-import br.ufsc.ine5605.clavicularioeletronico.persistencia.PermissaoUsoVeiculoDAO;
 import br.ufsc.ine5605.clavicularioeletronico.telasgraficas.AcoesCadastro;
 import br.ufsc.ine5605.clavicularioeletronico.telasgraficas.ITelaBaseCadastroObserver;
 import br.ufsc.ine5605.clavicularioeletronico.telasgraficas.ITelaBaseTableObserver;
@@ -115,12 +113,7 @@ public class ControladorFuncionario extends ControladorCadastroNew<TelaTableFunc
     protected List<DadosFuncionario> getListaDTO() {
         ArrayList<DadosFuncionario> lista = new ArrayList<>();
         for (Funcionario funcionario : getDao().getList()) {
-            lista.add(new DadosFuncionario(funcionario.getMatricula(), 
-                                           funcionario.getNome(), 
-                                           funcionario.getNascimento(),
-                                           funcionario.getTelefone(), 
-                                           funcionario.getCargo(), 
-                                           funcionario.isBloqueado()));
+            lista.add(funcionario.getDTO());
         }
         return lista;
     }
@@ -204,7 +197,11 @@ public class ControladorFuncionario extends ControladorCadastroNew<TelaTableFunc
 
     public void abreCadastroPermissaoUsoVeiculo(Integer matricula) {
         try {
-            this.telaTablePermissoes.setDadosFuncionario(DadosFuncionario.from(getFuncionarioPelaMatricula(matricula)));
+            Funcionario funcionario = getFuncionarioPelaMatricula(matricula);
+            if (funcionario.getCargo() == Cargo.DIRETORIA) {
+                throw new CadastroInvalidoPermissaoUsoVeiculoDiretoria();
+            }
+            this.telaTablePermissoes.setDadosFuncionario(funcionario.getDTO());
             this.telaTablePermissoes.setVisible(true);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e.getMessage());
@@ -261,7 +258,7 @@ public class ControladorFuncionario extends ControladorCadastroNew<TelaTableFunc
         Funcionario funcionario = getFuncionarioPelaMatricula(matricula);
         List<DadosVeiculo> lista = new ArrayList<>();
         for (Veiculo veiculo : funcionario.getVeiculos()) {
-            lista.add(new DadosVeiculo(veiculo.getPlaca(), veiculo.getModelo(), veiculo.getMarca(), veiculo.getAno(), veiculo.getQuilometragemAtual()));
+            lista.add(veiculo.getDTO());
         }
         return lista;
     }
@@ -300,7 +297,7 @@ public class ControladorFuncionario extends ControladorCadastroNew<TelaTableFunc
                 try {
                     Integer matricula = dadosFuncionario.matricula;
                     excluiPermissao(matricula, dadosVeiculo.placa);
-                    telaTablePermissoes.setDadosFuncionario(DadosFuncionario.from(getFuncionarioPelaMatricula(matricula)));
+                    telaTablePermissoes.setDadosFuncionario(getFuncionarioPelaMatricula(matricula).getDTO());
                     //atualizaListaTelaPermissoes(item.matriculaFuncionario);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(null, e.getMessage());
@@ -315,7 +312,7 @@ public class ControladorFuncionario extends ControladorCadastroNew<TelaTableFunc
                 if (AcoesCadastro.ACAO_INCLUI.equals(acao)) {
                     incluiPermissao(item.matriculaFuncionario, item.placaVeiculo);
                 }
-                telaTablePermissoes.setDadosFuncionario(DadosFuncionario.from(getFuncionarioPelaMatricula(item.matriculaFuncionario)));
+                telaTablePermissoes.setDadosFuncionario(getFuncionarioPelaMatricula(item.matriculaFuncionario).getDTO());
                 //atualizaListaTelaPermissoes(item.matriculaFuncionario);
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, e.getMessage());
