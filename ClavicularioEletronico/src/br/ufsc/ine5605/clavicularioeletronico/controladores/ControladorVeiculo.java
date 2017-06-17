@@ -94,6 +94,16 @@ public class ControladorVeiculo extends ControladorCadastroNew<TelaTableVeiculo,
     }
 
     @Override
+    protected String getMensagemConfirmacaoExclusao(DadosVeiculo dadosVeiculo) {
+        return super.getMensagemConfirmacaoExclusao(dadosVeiculo) +
+               "\nPlaca: " + dadosVeiculo.placa + 
+               "\nModelo: " + dadosVeiculo.modelo + 
+               "\nMarca: " + dadosVeiculo.marca;
+    }
+
+    
+    
+    @Override
     protected void executaExclusao(DadosVeiculo dadosVeiculo) {
         try {
             if (dadosVeiculo.placa == null || dadosVeiculo.placa.isEmpty()) {

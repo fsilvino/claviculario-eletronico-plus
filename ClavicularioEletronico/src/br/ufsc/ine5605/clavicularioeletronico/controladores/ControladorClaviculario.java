@@ -3,7 +3,6 @@ package br.ufsc.ine5605.clavicularioeletronico.controladores;
 
 import br.ufsc.ine5605.clavicularioeletronico.entidades.EventoClaviculario;
 import br.ufsc.ine5605.clavicularioeletronico.entidades.Funcionario;
-import br.ufsc.ine5605.clavicularioeletronico.entidades.PermissaoUsoVeiculo;
 import br.ufsc.ine5605.clavicularioeletronico.entidades.SaidaVeiculo;
 import br.ufsc.ine5605.clavicularioeletronico.entidades.Veiculo;
 import br.ufsc.ine5605.clavicularioeletronico.enums.Cargo;
@@ -72,9 +71,8 @@ public class ControladorClaviculario {
         if (funcionario.getCargo() == Cargo.DIRETORIA) {
             veiculo = ControladorVeiculo.getInstance().getVeiculoQuandoUnico();
         } else {
-            List<PermissaoUsoVeiculo> permissoes = ControladorFuncionario.getInstance().getPermissoesFuncionario(funcionario.getMatricula());
-            if (permissoes.size() == 1) {
-                veiculo = permissoes.get(0).getVeiculo();
+            if (funcionario.getVeiculos().size() == 1) {
+                veiculo = funcionario.getVeiculos().get(0);
             }
         }
         
@@ -84,8 +82,8 @@ public class ControladorClaviculario {
         }
         
         if (this.veiculoDisponivel(veiculo.getPlaca())) {
-            if (funcionario.getCargo() != Cargo.DIRETORIA) {   
-                 if (!ControladorFuncionario.getInstance().permissaoExiste(funcionario, veiculo)) {
+            if (funcionario.getCargo() != Cargo.DIRETORIA) {
+                 if (!funcionario.podeAcessarVeiculo(veiculo)) {
                     funcionario.incrementaNumeroTentativasSemPermissao();
                     this.novoEvento(Evento.PERMISSAO_INSUFICIENTE, matricula, "");
                     if (funcionario.getNumeroTentativasSemPermissao() > 3) {
@@ -148,7 +146,7 @@ public class ControladorClaviculario {
     public boolean funcionarioEstaUtilizandoAlgumVeiculo(int matricula) throws Exception {
         Funcionario funcionario = ControladorFuncionario.getInstance().getFuncionarioPelaMatricula(matricula);
         for (SaidaVeiculo veiculoFora : veiculosFora) {
-            if (veiculoFora.getFuncionario().getMatricula() == funcionario.getMatricula()) {
+            if (veiculoFora.getFuncionario().getMatricula().equals(funcionario.getMatricula())) {
                 return true;
             }
         }

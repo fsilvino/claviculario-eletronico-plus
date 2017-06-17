@@ -42,13 +42,18 @@ public class TelaTableFuncionario extends TelaBaseTable<DadosFuncionario> {
         constraint.gridwidth = 1;
         constraint.gridheight = 1;
         constraint.gridx = 3;
-        constraint.gridy = 4;
+        constraint.gridy = 3;
         container.add(this.btPermissoes, constraint);
     }
     
     @Override
     protected Dimension getTamanhoTela() {
-        return new Dimension(600, 350);
+        return new Dimension(650, 400);
+    }
+
+    @Override
+    protected int getTableGridY() {
+        return 0;
     }
 
     @Override

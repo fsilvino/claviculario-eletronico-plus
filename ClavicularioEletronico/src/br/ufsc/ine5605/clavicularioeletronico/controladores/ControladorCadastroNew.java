@@ -54,10 +54,14 @@ public abstract class ControladorCadastroNew<TTb extends TelaBaseTable<DTO>, TCa
     public void altera(DTO item) {
         this.telaCad.abreAlteracao(item);
     }
+    
+    protected String getMensagemConfirmacaoExclusao(DTO item) {
+        return "Deseja realmente excluir?";
+    }
 
     @Override
     public void exclui(DTO item) {
-        if (JOptionPane.showConfirmDialog(null, "Deseja realmente excluir?", "Confirmação", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+        if (JOptionPane.showConfirmDialog(null, this.getMensagemConfirmacaoExclusao(item), "Confirmação", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             executaExclusao(item);
             this.atualizaListaTela();
         }

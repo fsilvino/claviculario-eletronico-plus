@@ -2,6 +2,7 @@ package br.ufsc.ine5605.clavicularioeletronico.telasgraficas;
 
 import br.ufsc.ine5605.clavicularioeletronico.telas.*;
 import br.ufsc.ine5605.clavicularioeletronico.controladores.ControladorSistema;
+import br.ufsc.ine5605.clavicularioeletronico.enums.Cargo;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -13,9 +14,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 
 /**
  * 
@@ -39,15 +37,38 @@ public class TelaSistemaNew extends JFrame {
         menuBar = new MenuBar();
         
         Menu menu = new Menu("Cadastros");
-        MenuItem menuItem = new MenuItem("Funcionários...");
+        MenuItem menuItem = new MenuItem("Funcionários");
         menuItem.setActionCommand(AcoesTelaPrincipal.COMANDO_CADASTRO_FUNCIONARIO);
         menuItem.addActionListener(actManager);
         menu.add(menuItem);
         
-        menuItem = new MenuItem("Veículos...");
+        menuItem = new MenuItem("Veículos");
         menuItem.setActionCommand(AcoesTelaPrincipal.COMANDO_CADASTRO_VEICULO);
         menuItem.addActionListener(actManager);
         menu.add(menuItem);
+        menuBar.add(menu);
+        
+        menu = new Menu("Relatórios");
+        menuItem = new MenuItem("Relatório Completo");
+        menuItem.setActionCommand(AcoesTelaPrincipal.COMANDO_RELATORIO_COMPLETO);
+        menuItem.addActionListener(actManager);
+        menu.add(menuItem);
+        
+        menuItem = new MenuItem("Relatório por Funcionário");
+        menuItem.setActionCommand(AcoesTelaPrincipal.COMANDO_RELATORIO_POR_FUNCIONARIO);
+        menuItem.addActionListener(actManager);
+        menu.add(menuItem);
+        
+        menuItem = new MenuItem("Relatório por Veículo");
+        menuItem.setActionCommand(AcoesTelaPrincipal.COMANDO_RELATORIO_POR_VEICULO);
+        menuItem.addActionListener(actManager);
+        menu.add(menuItem);
+        
+        menuItem = new MenuItem("Relatório por Evento");
+        menuItem.setActionCommand(AcoesTelaPrincipal.COMANDO_RELATORIO_POR_EVENTO);
+        menuItem.addActionListener(actManager);
+        menu.add(menuItem);
+        
         menuBar.add(menu);
         
         Container container = getContentPane();
@@ -104,7 +125,14 @@ public class TelaSistemaNew extends JFrame {
         public static final String COMANDO_CADASTRO_VEICULO = "ABRE_CADASTRO_VEICULO";
         public static final String COMANDO_RETIRAR_CHAVE = "RETIRAR_CHAVE";
         public static final String COMANDO_DEVOLVER_CHAVE = "DEVOLVER_CHAVE";
+        public static final String COMANDO_RELATORIO_COMPLETO = "RELATORIO_COMPLETO";
+        public static final String COMANDO_RELATORIO_POR_FUNCIONARIO = "RELATORIO_POR_FUNCIONARIO";
+        public static final String COMANDO_RELATORIO_POR_VEICULO = "RELATORIO_POR_VEICULO";
+        public static final String COMANDO_RELATORIO_POR_EVENTO = "RELATORIO_POR_EVENTO";
         
+       
     }
+    
+    
     
 }

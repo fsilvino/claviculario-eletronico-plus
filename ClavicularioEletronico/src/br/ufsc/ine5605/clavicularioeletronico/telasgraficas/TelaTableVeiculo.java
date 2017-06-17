@@ -22,6 +22,11 @@ public class TelaTableVeiculo extends TelaBaseTable<DadosVeiculo> {
     }
 
     @Override
+    protected int getTableGridY() {
+        return 0;
+    }
+    
+    @Override
     protected TableModel getTableModel() {
         DefaultTableModel tbModel = new DefaultTableModel();
         tbModel.addColumn("Placa");
