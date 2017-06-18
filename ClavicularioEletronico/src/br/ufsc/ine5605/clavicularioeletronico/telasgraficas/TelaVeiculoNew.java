@@ -4,8 +4,11 @@ import br.ufsc.ine5605.clavicularioeletronico.transferencias.DadosVeiculo;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
+import java.text.ParseException;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.text.MaskFormatter;
 
 /**
  *
@@ -14,13 +17,13 @@ import javax.swing.JTextField;
 public class TelaVeiculoNew extends TelaBaseCadastro<DadosVeiculo> {
 
     private JLabel lbPlaca;
-    private JTextField tfPlaca;
+    private JFormattedTextField tfPlaca;
     private JLabel lbModelo;
     private JTextField tfModelo;
     private JLabel lbMarca;
     private JTextField tfMarca;
     private JLabel lbAno;
-    private JTextField tfAno;
+    private JFormattedTextField tfAno;
     private JLabel lbQuilometragemAtual;
     private JTextField tfQuilometragemAtual;
     
@@ -34,8 +37,20 @@ public class TelaVeiculoNew extends TelaBaseCadastro<DadosVeiculo> {
         super.init();
         
         Container container = getContentPane();
-        
         GridBagConstraints constraint = new GridBagConstraints();
+        
+        
+        MaskFormatter mascaraPlaca = null;
+        MaskFormatter mascaraAno = null;
+        try{
+                
+            mascaraPlaca = new MaskFormatter("UUU-####");
+            mascaraAno = new MaskFormatter("####");
+
+
+        } catch(ParseException excp) {
+                System.err.println("Erro na formatação da mascara: " + excp.getMessage());
+        }
         
         this.lbPlaca = new JLabel("Placa: ");
         constraint.gridheight = 1;
@@ -44,7 +59,7 @@ public class TelaVeiculoNew extends TelaBaseCadastro<DadosVeiculo> {
         constraint.gridy = 0;
         container.add(this.lbPlaca, constraint);
         
-        this.tfPlaca = new JTextField();
+        this.tfPlaca = new JFormattedTextField(mascaraPlaca);
         this.tfPlaca.setPreferredSize(new Dimension(130, 20));
         constraint.gridheight = 1;
         constraint.gridwidth = 2;
@@ -89,7 +104,7 @@ public class TelaVeiculoNew extends TelaBaseCadastro<DadosVeiculo> {
         constraint.gridy = 3;
         container.add(this.lbAno, constraint);
         
-        this.tfAno = new JTextField();
+        this.tfAno = new JFormattedTextField(mascaraAno);
         this.tfAno.setPreferredSize(new Dimension(130, 20));
         constraint.gridheight = 1;
         constraint.gridwidth = 2;

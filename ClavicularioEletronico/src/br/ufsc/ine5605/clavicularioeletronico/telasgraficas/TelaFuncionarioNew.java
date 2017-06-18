@@ -9,8 +9,10 @@ import java.awt.GridBagConstraints;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.text.MaskFormatter;
 
 /**
  *
@@ -25,9 +27,9 @@ public class TelaFuncionarioNew extends TelaBaseCadastro<DadosFuncionario> {
     private JLabel lbCargo;
     private JComboBox cbCargo;
     private JLabel lbNascimento;
-    private JTextField tfNascimento;
+    private JFormattedTextField tfNascimento;
     private JLabel lbTelefone;
-    private JTextField tfTelefone;
+    private JFormattedTextField tfTelefone;
     
     public TelaFuncionarioNew() {
         super("Cadastro Funcionário");
@@ -41,6 +43,31 @@ public class TelaFuncionarioNew extends TelaBaseCadastro<DadosFuncionario> {
         Container container = getContentPane();
         
         GridBagConstraints constraint = new GridBagConstraints();
+        
+        //Mascaras para FormatedTextFields
+        //Define as máscaras
+        MaskFormatter mascaraDataNascimento = null;
+        MaskFormatter mascaraTelefone = null;
+
+        //Testa erro na definição da mascara
+        try{
+            /* # - (0-9)
+            *  U - (a-z) - Converte para maiusculo
+            *  L - (a-z) - Converte para minusculo
+            *  ? - (a-z) - Mantém formatação
+            *  A - (a-z,0-9)
+            *  * - (QualquerCoisa)
+            */
+            mascaraDataNascimento = new MaskFormatter("##/##/####");
+            mascaraTelefone = new MaskFormatter("(**)*****-****");
+            mascaraTelefone.setValidCharacters("0123456789 ");
+
+        }
+        catch(ParseException e) {
+            System.out.println("Erro na formatação da mascara: " + e.getMessage());
+  
+        }
+   
         
         this.lbMatricula = new JLabel("Matrícula: ");
         constraint.gridheight = 1;
@@ -94,7 +121,7 @@ public class TelaFuncionarioNew extends TelaBaseCadastro<DadosFuncionario> {
         constraint.gridy = 3;
         container.add(this.lbNascimento, constraint);
         
-        this.tfNascimento = new JTextField();
+        this.tfNascimento = new JFormattedTextField(mascaraDataNascimento);
         this.tfNascimento.setPreferredSize(new Dimension(130, 20));
         constraint.gridheight = 1;
         constraint.gridwidth = 2;
@@ -109,7 +136,7 @@ public class TelaFuncionarioNew extends TelaBaseCadastro<DadosFuncionario> {
         constraint.gridy = 4;
         container.add(this.lbTelefone, constraint);
         
-        this.tfTelefone = new JTextField();
+        this.tfTelefone = new JFormattedTextField(mascaraTelefone);
         this.tfTelefone.setPreferredSize(new Dimension(130, 20));
         constraint.gridheight = 1;
         constraint.gridwidth = 2;
