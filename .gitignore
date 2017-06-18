@@ -20,6 +20,6 @@
 
 
 #Netbeans stuff
-/ClavicularioEletronico/nbproject/private/
-/ClavicularioEletronico/build/
-/ClavicularioEletronico/dist/
+nbproject/private/
+build/
+dist/
