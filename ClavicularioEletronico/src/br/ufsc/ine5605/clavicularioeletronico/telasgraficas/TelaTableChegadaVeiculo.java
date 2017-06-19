@@ -135,7 +135,11 @@ public class TelaTableChegadaVeiculo extends JFrame {
         return this.tfQuilometragem.getText();
     }
     
-    private static class ActionManager implements ActionListener{
+    public void fechaTela() {
+        setVisible(false);
+    }
+    
+    private class ActionManager implements ActionListener{
 
         public ActionManager() {
             
@@ -146,7 +150,8 @@ public class TelaTableChegadaVeiculo extends JFrame {
             if (AcoesClaviculario.ACAO_OK.equals(e.getActionCommand())) {
                 try {
                     ControladorClaviculario.getInstance().devolverVeiculo();
-                    JOptionPane.showMessageDialog(null, "Chave devolvida com sucesso!");                  
+                    JOptionPane.showMessageDialog(null, "Chave devolvida com sucesso!");  
+                    fechaTela();
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(null, ex.getMessage());
                 }

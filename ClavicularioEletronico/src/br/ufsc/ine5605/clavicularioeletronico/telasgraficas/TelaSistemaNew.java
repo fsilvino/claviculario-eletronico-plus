@@ -116,7 +116,16 @@ public class TelaSistemaNew extends JFrame {
                 ControladorSistema.getInstance().abreRetirarChaveClaviculario();
             } else if (AcoesTelaPrincipal.COMANDO_DEVOLVER_CHAVE.equals(e.getActionCommand())) {
                 ControladorSistema.getInstance().abreDevolverChaveClaviculario();
+            } else if (AcoesTelaPrincipal.COMANDO_RELATORIO_COMPLETO.equals(e.getActionCommand())) {
+                ControladorSistema.getInstance().abreRelatorioCompleto();
+            } else if (AcoesTelaPrincipal.COMANDO_RELATORIO_POR_EVENTO.equals(e.getActionCommand())) {
+                ControladorSistema.getInstance().abreRelatorioEvento();
+            } else if (AcoesTelaPrincipal.COMANDO_RELATORIO_POR_FUNCIONARIO.equals(e.getActionCommand())) {
+                ControladorSistema.getInstance().abreRelatorioFuncionario();
+            } else if (AcoesTelaPrincipal.COMANDO_RELATORIO_POR_VEICULO.equals(e.getActionCommand())) {
+                ControladorSistema.getInstance().abreRelatorioVeiculo();
             }
+            
         }     
     }
     

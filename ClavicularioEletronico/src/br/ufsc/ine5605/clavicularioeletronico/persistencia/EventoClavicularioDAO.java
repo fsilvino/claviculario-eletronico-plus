@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * 
  * @author Flávio
  */
-public class EventoClavicularioDAO extends BaseDAO<String, EventoClaviculario> {
+public class EventoClavicularioDAO extends BaseDAO<Integer, EventoClaviculario> {
     
     private static EventoClavicularioDAO instance;
     
@@ -26,6 +26,12 @@ public class EventoClavicularioDAO extends BaseDAO<String, EventoClaviculario> {
     @Override
     protected String getFileName() {
         return "eventoclaviculario.cla";
+    }
+    
+    public void put(EventoClaviculario evento) {
+        int key = 10000 - this.cache.size();
+        this.cache.put(key, evento);
+        persist();
     }
     
     public ArrayList<EventoClaviculario> getListByMatricula(Integer matricula) {
