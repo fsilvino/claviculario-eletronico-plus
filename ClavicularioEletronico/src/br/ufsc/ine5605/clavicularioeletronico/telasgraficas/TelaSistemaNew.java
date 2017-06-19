@@ -90,8 +90,8 @@ public class TelaSistemaNew extends JFrame {
         
         this.btDevolverChave = new JButton("Devolver Chave");
         this.btDevolverChave.setPreferredSize(new Dimension(250, 60));
-        this.btRetirarChave.setActionCommand(AcoesTelaPrincipal.COMANDO_DEVOLVER_CHAVE);
-        this.btRetirarChave.addActionListener(actManager);
+        this.btDevolverChave.setActionCommand(AcoesTelaPrincipal.COMANDO_DEVOLVER_CHAVE);
+        this.btDevolverChave.addActionListener(actManager);
         constraints.gridwidth = 1;
         constraints.gridheight = 1;
         constraints.gridx = 0;
@@ -114,9 +114,10 @@ public class TelaSistemaNew extends JFrame {
                 ControladorSistema.getInstance().abreCadastroVeiculo();
             } else if (AcoesTelaPrincipal.COMANDO_RETIRAR_CHAVE.equals(e.getActionCommand())) {
                 ControladorSistema.getInstance().abreRetirarChaveClaviculario();
+            } else if (AcoesTelaPrincipal.COMANDO_DEVOLVER_CHAVE.equals(e.getActionCommand())) {
+                ControladorSistema.getInstance().abreDevolverChaveClaviculario();
             }
-        }
-        
+        }     
     }
     
     private class AcoesTelaPrincipal {

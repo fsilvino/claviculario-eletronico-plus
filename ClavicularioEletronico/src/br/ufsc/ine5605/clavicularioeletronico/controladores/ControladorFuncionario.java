@@ -8,6 +8,7 @@ import br.ufsc.ine5605.clavicularioeletronico.excecoes.CadastroInvalidoPermissao
 import br.ufsc.ine5605.clavicularioeletronico.excecoes.MatriculaJaCadastradaException;
 import br.ufsc.ine5605.clavicularioeletronico.excecoes.MatriculaNaoCadastradaException;
 import br.ufsc.ine5605.clavicularioeletronico.persistencia.FuncionarioDAO;
+import br.ufsc.ine5605.clavicularioeletronico.persistencia.VeiculoDAO;
 import br.ufsc.ine5605.clavicularioeletronico.telasgraficas.AcoesCadastro;
 import br.ufsc.ine5605.clavicularioeletronico.telasgraficas.ITelaBaseCadastroObserver;
 import br.ufsc.ine5605.clavicularioeletronico.telasgraficas.ITelaBaseTableObserver;
@@ -259,6 +260,9 @@ public class ControladorFuncionario extends ControladorCadastroNew<TelaTableFunc
         List<DadosVeiculo> lista = new ArrayList<>();
         for (Veiculo veiculo : funcionario.getVeiculos()) {
             lista.add(veiculo.getDTO());
+        }
+        if (funcionario.getCargo() == Cargo.DIRETORIA) {
+            return ControladorVeiculo.getInstance().getListaDTO();
         }
         return lista;
     }

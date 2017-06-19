@@ -43,5 +43,9 @@ public class ControladorSistema {
     public void abreRetirarChaveClaviculario() {
         ControladorClaviculario.getInstance().abreTelaRetirarChave();
     }
+    
+    public void abreDevolverChaveClaviculario() {
+        ControladorClaviculario.getInstance().abreTelaDevolverChave();
+    }
 
 }
