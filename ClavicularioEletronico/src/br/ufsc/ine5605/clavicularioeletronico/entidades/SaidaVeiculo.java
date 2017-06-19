@@ -1,5 +1,6 @@
 package br.ufsc.ine5605.clavicularioeletronico.entidades;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
 /**
@@ -7,7 +8,9 @@ import java.util.Calendar;
  * está.
  * @author Flávio
  */
-public class SaidaVeiculo {
+public class SaidaVeiculo implements Serializable {
+    
+    private static final long serialVersionUID = 1L;
     
     private Veiculo veiculo;
     private Funcionario funcionario;

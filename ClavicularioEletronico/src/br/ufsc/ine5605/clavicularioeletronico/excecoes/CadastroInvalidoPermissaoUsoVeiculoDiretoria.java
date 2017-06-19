@@ -12,7 +12,7 @@ public class CadastroInvalidoPermissaoUsoVeiculoDiretoria extends Exception {
     }
 
     public CadastroInvalidoPermissaoUsoVeiculoDiretoria(String msg) {
-        super("Este funcionario tem acesso a todos os veiculos pois seu cargo eh de diretoria." + (msg == null || msg.trim().isEmpty() ? "" : "\n" + msg));
+        super("Este funcionário tem acesso a todos os veículos pois seu cargo é de diretoria." + (msg == null || msg.trim().isEmpty() ? "" : "\n" + msg));
     }
 
 }
