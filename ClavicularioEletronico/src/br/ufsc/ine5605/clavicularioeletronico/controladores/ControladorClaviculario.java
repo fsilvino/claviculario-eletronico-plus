@@ -13,6 +13,7 @@ import br.ufsc.ine5605.clavicularioeletronico.persistencia.EventoClavicularioDAO
 import br.ufsc.ine5605.clavicularioeletronico.persistencia.SaidaVeiculoDAO;
 import br.ufsc.ine5605.clavicularioeletronico.persistencia.VeiculoDAO;
 import br.ufsc.ine5605.clavicularioeletronico.telasgraficas.TelaDevolverChave;
+import br.ufsc.ine5605.clavicularioeletronico.telasgraficas.TelaRelatorio;
 import br.ufsc.ine5605.clavicularioeletronico.telasgraficas.TelaRetirarChave;
 import br.ufsc.ine5605.clavicularioeletronico.telasgraficas.TelaTableChegadaVeiculo;
 import br.ufsc.ine5605.clavicularioeletronico.telasgraficas.TelaTableSaidaVeiculo;
@@ -38,12 +39,14 @@ public class ControladorClaviculario {
     private TelaDevolverChave telaDevolver;
     private TelaTableSaidaVeiculo tbRetirar;
     private TelaTableChegadaVeiculo tbDevolver;
+    private TelaRelatorio tbRelatorio;
     
     private ControladorClaviculario() {
         telaRetirar = new TelaRetirarChave();
         tbDevolver = new TelaTableChegadaVeiculo();
         telaDevolver = new TelaDevolverChave();
         tbRetirar = new TelaTableSaidaVeiculo();
+        tbRelatorio = new TelaRelatorio();
     }
 
     public static ControladorClaviculario getInstance() {
@@ -75,7 +78,7 @@ public class ControladorClaviculario {
     
     private void atualizaListaRetirarChave() throws Exception {
         int matricula = validaMatricula(telaRetirar.getInput());
-        List<DadosVeiculo> dadosVeiculo = ControladorFuncionario.getInstance().getListaPermissoes(matricula);
+        List<DadosVeiculo> dadosVeiculo = ControladorVeiculo.getInstance().getListaDTO();
         if (dadosVeiculo.isEmpty()) {
             throw new Exception ("Voce nao tem permissao para retirar a chave de nenhum veiculo!");
         }
@@ -153,8 +156,12 @@ public class ControladorClaviculario {
             if (veiculoFora.getFuncionario().getMatricula() == matricula) {
                 if (!this.tbDevolver.getQuilometragemAtual().matches("^[1-9][0-9]*")) {
                     throw new Exception ("Você deve informar a quilometragem atual, sendo um numero positivo!");
-                }              
-                veiculoFora.getVeiculo().setQuilometragemAtual(Integer.parseInt(this.tbDevolver.getQuilometragemAtual()));
+                }
+                int quilometragemAtual = Integer.parseInt(this.tbDevolver.getQuilometragemAtual());
+                if (quilometragemAtual < veiculoFora.getVeiculo().getQuilometragemAtual()) {
+                    throw new Exception ("A quilometragem atual deve ser maior que a antiga!");
+                }
+                veiculoFora.getVeiculo().setQuilometragemAtual(quilometragemAtual);
                 VeiculoDAO.getInstance().put(veiculo.getPlaca(), veiculo);
                 SaidaVeiculoDAO.getInstance().remove(veiculo.getPlaca());
                 this.novoEvento(Evento.VEICULO_DEVOLVIDO, matricula, veiculo.getPlaca());
@@ -189,7 +196,7 @@ public class ControladorClaviculario {
     private void novoEvento(Evento evento, int matricula, String placa) {
         Calendar dataHora = Calendar.getInstance();           //verificar como pegar a hora
         EventoClaviculario novoEvento = new EventoClaviculario(evento,dataHora, matricula, placa);
-        EventoClavicularioDAO.getInstance().put(placa, novoEvento);      
+        EventoClavicularioDAO.getInstance().put(novoEvento);      
     }
     
     private void novaSaida(Veiculo veiculo, Funcionario funcionario) {
@@ -224,6 +231,21 @@ public class ControladorClaviculario {
          return getListaRelatorio(new ArrayList<>(EventoClavicularioDAO.getInstance().getList()));
     }
 
+    public void abreTelaRelatorioCompleto() {     
+        this.tbRelatorio.relatorioCompleto();
+    }
+    
+    public void abreTelaRelatorioEvento() {
+        this.tbRelatorio.relatorioEvento();
+    }
+
+    public void abreTelaRelatorioFuncionario() {
+        this.tbRelatorio.relatorioFuncionario();
+    }
+
+    public void abreTelaRelatorioVeiculo() {
+        this.tbRelatorio.relatorioVeiculo();
+    }
 
     
 }

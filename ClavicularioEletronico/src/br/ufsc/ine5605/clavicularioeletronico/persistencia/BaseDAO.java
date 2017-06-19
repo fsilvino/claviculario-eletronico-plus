@@ -18,7 +18,7 @@ import javax.swing.JOptionPane;
  */
 public abstract class BaseDAO<K, V> {
     
-    private HashMap<K, V> cache;
+    protected HashMap<K, V> cache;
     private final String fileName;
     
     protected BaseDAO() {

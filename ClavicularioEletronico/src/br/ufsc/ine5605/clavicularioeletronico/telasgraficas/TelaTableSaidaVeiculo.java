@@ -113,7 +113,11 @@ public class TelaTableSaidaVeiculo extends JFrame {
         return getItemSelecionado().placa;
     }
 
-    private static class ActionManager implements ActionListener{
+    public void fechaTela() {
+        setVisible(false);
+    }
+    
+    private class ActionManager implements ActionListener{
 
         public ActionManager() {
             
@@ -125,6 +129,7 @@ public class TelaTableSaidaVeiculo extends JFrame {
                 try {
                     ControladorClaviculario.getInstance().retirarChave();
                     JOptionPane.showMessageDialog(null, "Chave retirada com sucesso!");
+                    fechaTela();
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(null, ex.getMessage());
                 }

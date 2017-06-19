@@ -48,4 +48,20 @@ public class ControladorSistema {
         ControladorClaviculario.getInstance().abreTelaDevolverChave();
     }
 
+    public void abreRelatorioCompleto() {
+        ControladorClaviculario.getInstance().abreTelaRelatorioCompleto();
+    }
+    
+    public void abreRelatorioEvento() {
+        ControladorClaviculario.getInstance().abreTelaRelatorioEvento();
+    }
+
+    public void abreRelatorioFuncionario() {
+        ControladorClaviculario.getInstance().abreTelaRelatorioFuncionario();
+    }
+
+    public void abreRelatorioVeiculo() {
+        ControladorClaviculario.getInstance().abreTelaRelatorioVeiculo();
+    }
+
 }
